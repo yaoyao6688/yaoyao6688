@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Java注解 | beautiful test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="温故而知新，总结一下0x01 注解基础知识注解和jdk版本关系：从JDK5开始什么是注解：代码的标签，是源代码的元数据。注解的作用：读懂别人的代码，简化代码的配置注解的本质：1，附属于代码，依赖于方法，类，属性存在         2，本身没有任何作用，在恰当的时候有外部程序解析产生注解的分类：1，JDk内置注解（@Override、@Derprecated、@SupperWarnings）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java注解">
+<meta property="og:url" content="http://yoursite.com/2019/10/20/Java注解/index.html">
+<meta property="og:site_name" content="beautiful test">
+<meta property="og:description" content="温故而知新，总结一下0x01 注解基础知识注解和jdk版本关系：从JDK5开始什么是注解：代码的标签，是源代码的元数据。注解的作用：读懂别人的代码，简化代码的配置注解的本质：1，附属于代码，依赖于方法，类，属性存在         2，本身没有任何作用，在恰当的时候有外部程序解析产生注解的分类：1，JDk内置注解（@Override、@Derprecated、@SupperWarnings）">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-20T05:54:04.534Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java注解">
+<meta name="twitter:description" content="温故而知新，总结一下0x01 注解基础知识注解和jdk版本关系：从JDK5开始什么是注解：代码的标签，是源代码的元数据。注解的作用：读懂别人的代码，简化代码的配置注解的本质：1，附属于代码，依赖于方法，类，属性存在         2，本身没有任何作用，在恰当的时候有外部程序解析产生注解的分类：1，JDk内置注解（@Override、@Derprecated、@SupperWarnings）">
+  
+    <link rel="alternate" href="/atom.xml" title="beautiful test" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.jpg">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+  <script>
+  let antiquityStorage = window.sessionStorage.getItem('antiquitySessionStorage');
+  if (antiquityStorage == '' || antiquityStorage == null) {
+    var antiquityLoader = '<div id="loaderbox"><div class="loader"><div class="load-roll"><div class="load-top"></div><div class="load-right"></div><div class="load-bottom"></div></div></div></div>';
+    document.write(antiquityLoader);
+    document.body.style.overflow = 'hidden'
+  }
+  </script>
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-right">
+    
+      <div id="wrapper" style="background-image: url(/images/test.jpg)" title="为了更安全的互联网">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-right">
+      
+        <a class="nav-item" href="/" title
+        
+        >首页</a>
+      
+        <a class="nav-item" href="/archives" title
+        
+        >归档</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-Java注解" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      Java注解
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2019/10/20/Java注解/" class="article-date">
+  <time datetime="2019-10-20T05:53:44.000Z" itemprop="datePublished">2019-10-20</time>
+</a>
+    
+    
+  </div>
+  
+    <span id="busuanzi_container_page_pv">
+      本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+    </span>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>温故而知新，总结一下<br><strong>0x01 注解基础知识</strong><br>注解和jdk版本关系：从JDK5开始<br>什么是注解：代码的标签，是源代码的元数据。<br>注解的作用：读懂别人的代码，简化代码的配置<br>注解的本质：1，附属于代码，依赖于方法，类，属性存在<br>         2，本身没有任何作用，在恰当的时候有外部程序解析产生<br>注解的分类：1，JDk内置注解（@Override、@Derprecated、@SupperWarnings）<br>         2，第三方框架的注解：<br>          Spring：@Autowired @Controller @Service @Respository<br>          Mybatis:@InsertProvider @Update @Options<br>         3,按照生命周期进行分类：<br>          （1），SOURCE源码注解<br>          （2），CLASS编译时注解：存在于源码及class文件中<br>          （3）, RUNTIME运行时注解：注解保留到运行时，甚至还会影响运行逻辑，@autowired属于运行时注解</p>
+<p>元注解：注解的注解<br>   @Retention 定义生命周期，可选值：SOURCE,CLASS，RUNTIME<br>   @Documented 文档化注解<br>   @Inherited 注解是自动继承的<br>   @Target 注解的使用范围</p>
+<p>   自定义注解无法规则：成员以无参方式声明；可以使用deafault关键字指定默认值，成员类型是受限制的，合法的类型包括<br>   注解类可以没有成员，没有成员的注解称为标识注解</p>
+<p><strong>0x02举个例子</strong><br>   编辑器环境：IDEA<br>   定义一个注解类：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import javax.management.relation.RelationType;</span><br><span class="line">import java.lang.annotation.*;</span><br><span class="line"></span><br><span class="line">@Target (&#123;ElementType.METHOD,ElementType.TYPE&#125;)</span><br><span class="line">@Retention (RetentionPolicy.RUNTIME)//注解可以保留到程序运行的时候</span><br><span class="line">@Inherited</span><br><span class="line">@Documented</span><br><span class="line">public @interface Description &#123;//注解的属性</span><br><span class="line">    String desc();//描述内容</span><br><span class="line">    String author();//描述作者</span><br><span class="line">    int age() default 18;//描述年龄</span><br><span class="line">    /*</span><br><span class="line">     */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>定义一个普通类</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">@Description (</span><br><span class="line">        desc = &quot;a&quot;,</span><br><span class="line">        author = &quot;b&quot;,</span><br><span class="line">        age = 19</span><br><span class="line">)</span><br><span class="line">public class testnew &#123;</span><br><span class="line">  String desc;</span><br><span class="line">  String author;</span><br><span class="line">  int age;</span><br><span class="line"></span><br><span class="line">    public String getDesc() &#123;</span><br><span class="line">        return desc;</span><br><span class="line">    &#125;</span><br><span class="line">    @Description (</span><br><span class="line">            desc = &quot;a&quot;,</span><br><span class="line">            author = &quot;b&quot;,</span><br><span class="line">            age = 19</span><br><span class="line">    )</span><br><span class="line">    public void setDesc(String desc) &#123;</span><br><span class="line">        this.desc = desc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getAuthor() &#123;</span><br><span class="line">        return author;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAuthor(String author) &#123;</span><br><span class="line">        this.author = author;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getAge() &#123;</span><br><span class="line">        this.age=1;</span><br><span class="line">        return age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAge(int age) &#123;</span><br><span class="line"></span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>main方法读取类的注解，一些知名的框架通过注解来实现配置简单化，这个时候往往用到了java反射机制来实现，这也就是为什么有些课程会讲到框架的底层靠反射实现</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import com.sun.tools.javac.comp.Annotate;</span><br><span class="line"></span><br><span class="line">import java.io.File;</span><br><span class="line">import java.lang.annotation.Annotation;</span><br><span class="line">import java.lang.reflect.Field;</span><br><span class="line">import java.lang.reflect.InvocationTargetException;</span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(&quot;Hello World!&quot;);</span><br><span class="line">        test1();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void test1()&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            //使用类加载器</span><br><span class="line">            Class clazz = Class.forName ( &quot;testnew&quot;);</span><br><span class="line">            //类是否有注解</span><br><span class="line">            boolean isClsExits =clazz.isAnnotationPresent ( Description.class );//</span><br><span class="line">            System.out.println (isClsExits);</span><br><span class="line"></span><br><span class="line">            if (isClsExits)&#123;</span><br><span class="line">                Description test=(Description)clazz.getAnnotation(Description.class);</span><br><span class="line">                System.out.println (test.author ());</span><br><span class="line">            &#125;</span><br><span class="line">            //获取类的注解</span><br><span class="line">            Annotation[] annotations=clazz.getAnnotations ();</span><br><span class="line"></span><br><span class="line">            for (Annotation a :annotations)&#123;</span><br><span class="line">                System.out.println (a);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            //获取 方法的注解</span><br><span class="line">            Method[] met =clazz.getMethods ();</span><br><span class="line">            for (Method method :met)&#123;</span><br><span class="line">                boolean ismetExits =method.isAnnotationPresent (Description.class );</span><br><span class="line">                if (ismetExits)&#123;</span><br><span class="line">                Description des =(Description)method.getAnnotation (Description.class);</span><br><span class="line">                //获取方法的注解的某个属性</span><br><span class="line">                    System.out.println (des.age ());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            System.out.println (clazz.getName ());//获取包名和类名</span><br><span class="line">            System.out.println (clazz.getSimpleName ());//获取类名</span><br><span class="line">            //调用类的方式1</span><br><span class="line">//            Object object = clazz.newInstance();</span><br><span class="line">            Method method = clazz.getMethod(&quot;getAge&quot;);//获取类的某个方法</span><br><span class="line">//            System.out.println(method.invoke(object));</span><br><span class="line">            //调用类的方式2</span><br><span class="line">            Object obj = method.invoke(clazz.newInstance());</span><br><span class="line"></span><br><span class="line">            System.out.println(obj);</span><br><span class="line">            //获取类的所有方法</span><br><span class="line">//            Method[] methods1 = clazz.getMethods();</span><br><span class="line">//            for (Method method2 : methods1) &#123;</span><br><span class="line">//                //获取类中方法的全名(eg:public com.test.Main())</span><br><span class="line">//                System.out.println(method2);</span><br><span class="line">//            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (NoSuchMethodException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (IllegalAccessException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (InstantiationException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (InvocationTargetException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>main方法运行结果：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Hello World!</span><br><span class="line">true</span><br><span class="line">b</span><br><span class="line">@Description(age=19, desc=a, author=b)</span><br><span class="line">19</span><br><span class="line">testnew</span><br><span class="line">testnew</span><br><span class="line">1</span><br></pre></td></tr></table></figure></div>
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2019/10/20/文章名字/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">文章名字</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  owner: '',
+  repo: '',
+  oauth: {
+    client_id: '',
+    client_secret: '',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/code-title.png" title="为了更安全的互联网"></img>
+    <h3 class="avatar-name">
+      
+        泰斯特
+      
+    </h3>
+    <p class="avatar-slogan">
+      搬砖工程师。
+    </p>
+  </div>
+</div>
+
+
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/10/20/Java注解/">Java注解</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/20/文章名字/">文章名字</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/13/SQL-injection-in-Gila-CMS-version-1-11-4/">SQL injection in Gila CMS version 1.11.4</a>
+          </li>
+        
+          <li>
+            <a href="/2019/10/12/Bypass-the-HTML-file-suffix-restriction-when-uploading-files/">Bypass the HTML file suffix restriction when uploading files</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/22/正则表达式总结和引起的思考/">正则表达式总结和引起的思考</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+      <div class="widget-box">
+    <h3 class="widget-title">友链</h3>
+    <div class="widget">
+      
+        <a style="display: block;" href="https://blog.ssssdl.xyz/" title target='_blank'
+        >ssssdl</a>
+      
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2019 test &nbsp;&nbsp;
+    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">不蒜子告之   阁下是第<span id="busuanzi_value_site_pv"></span>个访客</span>
+  </div>
+</footer>
+      <script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
+<script>
+if (!window.jQuery) {
+var script = document.createElement('script');
+script.src = "/js/jquery-2.0.3.min.js";
+document.body.write(script);
+}
+</script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

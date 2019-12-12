@@ -25,13 +25,13 @@
 <meta property="og:image" content="https://i.loli.net/2019/12/12/uxqHPjvi1gTNbfW.png">
 <meta property="og:image" content="https://i.loli.net/2019/12/12/D1n7IsPjxNphYeg.png">
 <meta property="og:image" content="https://i.loli.net/2019/12/12/V45q7voDYIiJhEe.png">
-<meta property="og:image" content="evernotecid://504D4263-C166-490E-8F6A-91115740B9CE/appyinxiangcom/22515805/ENResource/p452">
+<meta property="og:image" content="https://i.loli.net/2019/12/12/i28bqSR4EfFWCKm.png">
 <meta property="og:image" content="https://i.loli.net/2019/12/12/lbuMANsdEo4mihI.png">
 <meta property="og:image" content="https://i.loli.net/2019/12/12/Paw1EiTmu4BLZhM.png">
 <meta property="og:image" content="https://i.loli.net/2019/12/12/cIeZtlGugxSjpWv.png">
 <meta property="og:image" content="https://i.loli.net/2019/12/12/GjlTOHxsu4LqUim.png">
 <meta property="og:image" content="https://i.loli.net/2019/12/12/odsnMWE2bSIpxav.png">
-<meta property="og:updated_time" content="2019-12-12T02:13:10.873Z">
+<meta property="og:updated_time" content="2019-12-12T02:24:02.302Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Get Some Keys">
 <meta name="twitter:description" content="author:RUNTest 前言渗透测试遇到的几个demo,至此遇到web和移动端的几个案例，写文总结，不忘勤勉。 0x01 移动端第三方权限某次测试中，发现多处SDK厂商的存储桶以及接口控制台权限,不过有些需要脱壳才能获取硬编码信息往往写在com包的配置类，这样方便统一调用。不同SDK可能硬编码位置不同，如视频类SDK，推送类SDK，埋点类SDK需要结合具体业务场景进行发现。案例：dex中定位">
@@ -123,7 +123,7 @@
 <p> 可以发现可以获取到微信工装平台的用户信息，通过参考微信API文档还有更多的功能。<br> 这个漏洞有点奇葩，其实key是通过站点请求微信二维码的过程中，输入异常的字符串获取的，可以发送一些自己构造的异常数据包来看后台框架报错信息，进一步利用，异常的字符串或者数据可以夹杂些不同编码的字符串，或者加一些sql注入的语句，后端框架无法解析string或者触发拦截器或者输入后台接口所规定的字符串长度值会抛出异常作为响应。<br>以下是通过出发安全机制抛出程序上下文信息，其中就夹杂了我们需要的信息。</p>
 <p><img src="https://i.loli.net/2019/12/12/V45q7voDYIiJhEe.png" alt="图片.png"></p>
 <p>先说一下access_token，微信有俩种<a href="https://blog.csdn.net/benben_2015/article/details/79703508" target="_blank" rel="noopener">点这里</a><br>以公众号为例<br>微信官方这这样定义的：</p>
-<p><img src="evernotecid://504D4263-C166-490E-8F6A-91115740B9CE/appyinxiangcom/22515805/ENResource/p452" alt="d7561184d30a1551b0233085ec9ab4b2.png"><br>通过查看文档发现</p>
+<p><img src="https://i.loli.net/2019/12/12/i28bqSR4EfFWCKm.png" alt="image.png"><br>通过查看文档发现</p>
 <div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">appid=APPID&amp;secret=APPSECRET</span><br></pre></td></tr></table></figure></div>
 
 <p>需要以上字段才可以，但是又无法获取这俩字段，幸运的是通过错误信息可以直接拿到access_token，access_token在用户调用微信接口服务中起着重要作用，官方文档的描述是 “access_token是公众号的全局唯一接口调用凭据，公众号调用各接口时都需使用access_token。开发者需要进行妥善保存”<br>通过此字段，参考微信文档，可以直接get到微信公众号的很多部分API权限。<br>无需写代码，通过微信自定义的测试页面就可以展开很好的测试</p>

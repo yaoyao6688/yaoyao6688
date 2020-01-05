@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/01/05/kcAJ1K5PGYDdZIW.png">
 <meta property="og:image" content="https://i.loli.net/2020/01/05/qcSXOK6ZRUrnCYx.png">
 <meta property="og:image" content="https://i.loli.net/2020/01/05/ncEgVoHqLG9CwNX.png">
-<meta property="og:updated_time" content="2020-01-05T14:11:03.177Z">
+<meta property="og:updated_time" content="2020-01-05T17:07:18.385Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="关于最近log4j的漏洞复现及分析">
 <meta name="twitter:description" content="0x01 漏洞复现环境 JDK1.8 mac  maven3.6 log4j1.2.17  commons-collections3.1maven 配置如下： &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&amp;lt;project xmlns=&amp;quot;http://maven.apache.org/POM/4.0.">
@@ -105,7 +105,7 @@
 <p>log4j配置文件：<br>创建配置文件目录，idea下转成datasource配置，不然idea识别不了</p>
 <div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># src/resources/log4j.properties</span><br><span class="line">log4j.rootCategory=DEBUG,stdout</span><br><span class="line">log4j.appender.stdout=org.apache.log4j.ConsoleAppender</span><br><span class="line">log4j.appender.stdout.layout=org.apache.log4j.PatternLayout</span><br><span class="line">log4j.appender.stdout.threshold=DEBUG</span><br><span class="line">log4j.appender.stdout.layout.ConversionPattern=[%d&#123;yyy-MM-dd HH:mm:ss,SSS&#125;]-[%p]-[MSG!:%m]-[%c\:%L]%n</span><br></pre></td></tr></table></figure></div>
 
-<p>开启sockeet端口接受反序列化的流：</p>
+<p>开启socket端口接受反序列化的流：</p>
 <div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import org.apache.log4j.net.SimpleSocketServer;</span><br><span class="line"></span><br><span class="line">public class Sockettest &#123;</span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">        System.out.println(&quot;INFO: Log4j Listening on port 8888&quot;);</span><br><span class="line">        String[] arguments = &#123;&quot;8888&quot;, (new Sockettest()).getClass().getClassLoader().getResource(&quot;log4j.properties&quot;).getPath()&#125;;//创建socket,加载配置文件</span><br><span class="line">        SimpleSocketServer.main(arguments);</span><br><span class="line">        System.out.println(&quot;INFO: Log4j output successfuly.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
 <p>ojbk<br><img src="https://i.loli.net/2020/01/05/rNTvQdYgwq6yebn.png" alt="图片.png"></p>

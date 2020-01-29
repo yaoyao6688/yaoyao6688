@@ -143,7 +143,7 @@
 <p>上传文件到服务器：</p>
 <div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">hadoop fs -put wcinput /</span><br></pre></td></tr></table></figure></div>
 
-<p>执行计算命令(在文件系统会多处两个文件夹)</p>
+<p>执行计算命令(在文件系统会多处两个文件夹)<br>hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.7.jar wordcount /wcinput /wcoutput</p>
 <p><img src="https://i.loli.net/2020/01/29/ZLGnfxsMbuAWS8Q.png" alt="image.png"></p>
 <p>统计</p>
 <div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/opt/hadoop/hadoop-2.7.7# hadoop fs -cat /wcoutput/*</span><br><span class="line">hadoop	1</span><br><span class="line">hdaoop	1</span><br><span class="line">mapreduce	1</span><br><span class="line">test	2</span><br><span class="line">yarn	1</span><br></pre></td></tr></table></figure></div>

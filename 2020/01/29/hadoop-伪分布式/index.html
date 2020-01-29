@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/01/29/7fs4vb6QDPTmltG.png">
 <meta property="og:image" content="https://i.loli.net/2020/01/29/png4Zr8JwOWlFGU.png">
 <meta property="og:image" content="https://i.loli.net/2020/01/29/ZLGnfxsMbuAWS8Q.png">
-<meta property="og:updated_time" content="2020-01-29T15:02:38.601Z">
+<meta property="og:updated_time" content="2020-01-29T15:09:05.659Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hadoop 伪分布式">
 <meta name="twitter:description" content="hadoop 伪分布式整体的思路是在HDFS文件系统通过YARN资源调度，MapReduce（分布式）计算 配置HDFS并运行MapReduce1 配置hadoop的hadoop-env.sh export JAVA_HOME=/opt/java/jdk1.8.0_231 2 /etc/hadoop/core-site.xml &amp;lt;!--修改文件系统 --&amp;gt;&amp;lt;configurati">
@@ -153,7 +153,7 @@
 <p>上传文件到服务器：</p>
 <div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">hadoop fs -put wcinput /</span><br></pre></td></tr></table></figure></div>
 
-<p>执行计算命令(在文件系统会多处两个文件夹)</p>
+<p>执行计算命令(在文件系统会多处两个文件夹)<br>hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.7.jar wordcount /wcinput /wcoutput</p>
 <p><img src="https://i.loli.net/2020/01/29/ZLGnfxsMbuAWS8Q.png" alt="image.png"></p>
 <p>统计</p>
 <div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/opt/hadoop/hadoop-2.7.7# hadoop fs -cat /wcoutput/*</span><br><span class="line">hadoop	1</span><br><span class="line">hdaoop	1</span><br><span class="line">mapreduce	1</span><br><span class="line">test	2</span><br><span class="line">yarn	1</span><br></pre></td></tr></table></figure></div>

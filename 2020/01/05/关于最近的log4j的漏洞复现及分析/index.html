@@ -7,9 +7,6 @@
   
   <title>关于最近log4j的漏洞复现及分析 | beautiful test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
-  
-  
   <meta name="description" content="0x01 漏洞复现环境 JDK1.8 mac  maven3.6 log4j1.2.17  commons-collections3.1maven 配置如下： &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;&amp;lt;project xmlns=&amp;quot;http://maven.apache.org/POM/4.0.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="关于最近log4j的漏洞复现及分析">
@@ -30,74 +27,69 @@
     <link rel="alternate" href="/atom.xml" title="beautiful test" type="application/atom+xml">
   
   
-    <link rel="icon" href="/images/default-avatar.jpg">
+    <link rel="icon" href="/favicon.png">
   
   
     <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
   
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/highlight.css">
-  <script>
-  let antiquityStorage = window.sessionStorage.getItem('antiquitySessionStorage');
-  if (antiquityStorage == '' || antiquityStorage == null) {
-    var antiquityLoader = '<div id="loaderbox"><div class="loader"><div class="load-roll"><div class="load-top"></div><div class="load-right"></div><div class="load-bottom"></div></div></div></div>';
-    document.write(antiquityLoader);
-    document.body.style.overflow = 'hidden'
-  }
-  </script>
 </head>
 </html>
 <body>
-  <div id="fullpage" class="mobile-nav-right">
-    
-      <div id="wrapper" style="background-image: url(/images/test.jpg)" title="为了更安全的互联网">
-    
-    
+  <div id="container">
+    <div id="wrap">
       <header id="header">
-  <div id="nav-toggle" class="nav-toggle"></div>
-  <div class="head-box global-width">
-    <nav class="nav-box nav-right">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">beautiful test</a>
+      </h1>
       
-        <a class="nav-item" href="/" title
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
         
-        >首页</a>
-      
-        <a class="nav-item" href="/archives" title
+          <a class="main-nav-link" href="/">Home</a>
         
-        >归档</a>
-      
-    </nav>
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
   </div>
 </header>
-      <div id="middlecontent" title class="global-width sidebar-right">
-        <section id="main"><article id="post-关于最近的log4j的漏洞复现及分析" class="article global-container article-type-post" itemscope itemprop="blogPost">
-  
-    <header class="article-header">
-      
+      <div class="outer">
+        <section id="main"><article id="post-关于最近的log4j的漏洞复现及分析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/01/05/关于最近的log4j的漏洞复现及分析/" class="article-date">
+  <time datetime="2020-01-05T11:04:45.000Z" itemprop="datePublished">2020-01-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
     <h1 class="article-title" itemprop="name">
       关于最近log4j的漏洞复现及分析
     </h1>
   
 
-    </header>
-  
-  <div class="article-meta">
-    <a href="/2020/01/05/关于最近的log4j的漏洞复现及分析/" class="article-date">
-  <time datetime="2020-01-05T11:04:45.000Z" itemprop="datePublished">2020-01-05</time>
-</a>
+      </header>
     
-    
-  </div>
-  
-    <span id="busuanzi_container_page_pv">
-      本文总阅读量<span id="busuanzi_value_page_pv"></span>次
-    </span>
-  
-
-  <div class="article-inner">
-    
-    <div class="article-content article-content-cloud" itemprop="articleBody">
+    <div class="article-entry" itemprop="articleBody">
       
         <h3 id="0x01-漏洞复现"><a href="#0x01-漏洞复现" class="headerlink" title="0x01 漏洞复现"></a>0x01 漏洞复现</h3><p>环境 JDK1.8 mac  maven3.6 log4j1.2.17  commons-collections3.1<br>maven 配置如下：</p>
 <div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line"></span><br><span class="line">&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">  xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;</span><br><span class="line">  &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;</span><br><span class="line"></span><br><span class="line">  &lt;groupId&gt;runtest&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;runtest&lt;/artifactId&gt;</span><br><span class="line">  &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;</span><br><span class="line">  &lt;packaging&gt;war&lt;/packaging&gt;</span><br><span class="line"></span><br><span class="line">  &lt;name&gt;runtest Maven Webapp&lt;/name&gt;</span><br><span class="line">  &lt;!-- FIXME change it to the project&apos;s website --&gt;</span><br><span class="line">  &lt;url&gt;http://www.example.com&lt;/url&gt;</span><br><span class="line"></span><br><span class="line">  &lt;properties&gt;</span><br><span class="line">    &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;</span><br><span class="line">    &lt;maven.compiler.source&gt;1.7&lt;/maven.compiler.source&gt;</span><br><span class="line">    &lt;maven.compiler.target&gt;1.7&lt;/maven.compiler.target&gt;</span><br><span class="line">  &lt;/properties&gt;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  &lt;dependencies&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">      &lt;groupId&gt;junit&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;junit&lt;/artifactId&gt;</span><br><span class="line">      &lt;version&gt;4.11&lt;/version&gt;</span><br><span class="line">      &lt;scope&gt;test&lt;/scope&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">      &lt;dependency&gt;</span><br><span class="line">        &lt;groupId&gt;log4j&lt;/groupId&gt;</span><br><span class="line">        &lt;artifactId&gt;log4j&lt;/artifactId&gt;</span><br><span class="line">        &lt;version&gt;1.2.17&lt;/version&gt;</span><br><span class="line">      &lt;/dependency&gt;</span><br><span class="line">    &lt;dependency&gt;</span><br><span class="line">      &lt;groupId&gt;commons-collections&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;commons-collections&lt;/artifactId&gt;</span><br><span class="line">      &lt;version&gt;3.1&lt;/version&gt;</span><br><span class="line">    &lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">  &lt;/dependencies&gt;</span><br><span class="line"></span><br><span class="line">  &lt;build&gt;</span><br><span class="line">    &lt;finalName&gt;runtest&lt;/finalName&gt;</span><br><span class="line">    &lt;pluginManagement&gt;&lt;!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) --&gt;</span><br><span class="line">      &lt;plugins&gt;</span><br><span class="line">        &lt;plugin&gt;</span><br><span class="line">          &lt;artifactId&gt;maven-clean-plugin&lt;/artifactId&gt;</span><br><span class="line">          &lt;version&gt;3.1.0&lt;/version&gt;</span><br><span class="line">        &lt;/plugin&gt;</span><br><span class="line">        &lt;!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging --&gt;</span><br><span class="line">        &lt;plugin&gt;</span><br><span class="line">          &lt;artifactId&gt;maven-resources-plugin&lt;/artifactId&gt;</span><br><span class="line">          &lt;version&gt;3.0.2&lt;/version&gt;</span><br><span class="line">        &lt;/plugin&gt;</span><br><span class="line">        &lt;plugin&gt;</span><br><span class="line">          &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;</span><br><span class="line">          &lt;version&gt;3.8.0&lt;/version&gt;</span><br><span class="line">        &lt;/plugin&gt;</span><br><span class="line">        &lt;plugin&gt;</span><br><span class="line">          &lt;artifactId&gt;maven-surefire-plugin&lt;/artifactId&gt;</span><br><span class="line">          &lt;version&gt;2.22.1&lt;/version&gt;</span><br><span class="line">        &lt;/plugin&gt;</span><br><span class="line">        &lt;plugin&gt;</span><br><span class="line">          &lt;artifactId&gt;maven-war-plugin&lt;/artifactId&gt;</span><br><span class="line">          &lt;version&gt;3.2.2&lt;/version&gt;</span><br><span class="line">        &lt;/plugin&gt;</span><br><span class="line">        &lt;plugin&gt;</span><br><span class="line">          &lt;artifactId&gt;maven-install-plugin&lt;/artifactId&gt;</span><br><span class="line">          &lt;version&gt;2.5.2&lt;/version&gt;</span><br><span class="line">        &lt;/plugin&gt;</span><br><span class="line">        &lt;plugin&gt;</span><br><span class="line">          &lt;artifactId&gt;maven-deploy-plugin&lt;/artifactId&gt;</span><br><span class="line">          &lt;version&gt;2.8.2&lt;/version&gt;</span><br><span class="line">        &lt;/plugin&gt;</span><br><span class="line">      &lt;/plugins&gt;</span><br><span class="line">    &lt;/pluginManagement&gt;</span><br><span class="line">  &lt;/build&gt;</span><br><span class="line">&lt;/project&gt;</span><br></pre></td></tr></table></figure></div>
@@ -114,74 +106,47 @@
 
       
     </div>
-    
-      <footer class="article-footer">
-        完
-      </footer>
-    
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/01/05/关于最近的log4j的漏洞复现及分析/" data-id="ck5ziihdo0007n8jhxywnsjv9" class="article-share-link">Share</a>
+      
+        <a href="http://yoursite.com/2020/01/05/关于最近的log4j的漏洞复现及分析/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+    </footer>
   </div>
   
     
 <nav id="article-nav">
-  <div class="article-nav-block">
-    
-      <a href="/2020/01/12/深入剖析代审的线程安全问题/" id="article-nav-newer" class="article-nav-link-wrap">
-        <strong class="article-nav-caption"></strong>
-        <div class="article-nav-title">
-          
-            深入剖析代审的线程安全问题
-          
-        </div>
-      </a>
-    
-  </div>
-  <div class="article-nav-block">
-    
-      <a href="/2020/01/04/关于安卓SSL单项校验和双向校验的思考和总结/" id="article-nav-older" class="article-nav-link-wrap">
-        <div class="article-nav-title">关于安卓SSL单项校验和双向校验的思考和总结</div>
-        <strong class="article-nav-caption"></strong>
-      </a>
-    
-  </div>
+  
+    <a href="/2020/01/12/深入剖析代审的线程安全问题/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          深入剖析代审的线程安全问题
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/01/04/关于安卓SSL单项校验和双向校验的思考和总结/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">关于安卓SSL单项校验和双向校验的思考和总结</div>
+    </a>
+  
 </nav>
 
-    
-<div id="gitmentContainer"></div>
-<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
-<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
-<script>
-var gitment = new Gitment({
-  owner: '',
-  repo: '',
-  oauth: {
-    client_id: '',
-    client_secret: '',
-  },
-})
-gitment.render('gitmentContainer')
-</script>
-
-  
   
 </article>
-</section>
-        <aside id="sidebar">
-  
-    <div class="widget-box">
-  <div class="avatar-box">
-    <img class="avatar" src="/images/code-title.png" title="为了更安全的互联网"></img>
-    <h3 class="avatar-name">
-      
-        泰斯特
-      
-    </h3>
-    <p class="avatar-slogan">
-      搬砖工程师。
-    </p>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   </div>
-</div>
-
-
+</section>
+</section>
+        
+          <aside id="sidebar">
   
     
 
@@ -192,16 +157,17 @@ gitment.render('gitmentContainer')
     
   
     
-  <div class="widget-box">
+  <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
     </div>
   </div>
 
+
   
     
-  <div class="widget-box">
+  <div class="widget-wrap">
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
@@ -231,46 +197,44 @@ gitment.render('gitmentContainer')
   </div>
 
   
-      <div class="widget-box">
-    <h3 class="widget-title">友链</h3>
-    <div class="widget">
-      
-        <a style="display: block;" href="https://blog.ssssdl.xyz/" title target='_blank'
-        >ssssdl</a>
-      
-        <a style="display: block;" href="https://lingwu111.github.io/" title target='_blank'
-        >lingwu</a>
-      
-        <a style="display: block;" href="http://blog.0xccc.cc/" title target='_blank'
-        >canxiao</a>
-      
-        <a style="display: block;" href="http://www.vkxss.top/" title target='_blank'
-        >Vk</a>
-      
-    </div>
-  </div>
-
-  
 </aside>
+        
       </div>
       <footer id="footer">
-  <div class="foot-box global-width">
-    &copy; 2020 test &nbsp;&nbsp;
-    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
-    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
-    <br>
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <span id="busuanzi_container_site_pv">不蒜子告之   阁下是第<span id="busuanzi_value_site_pv"></span>个访客</span>
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 test<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
   </div>
 </footer>
-      <script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
 <script>
-if (!window.jQuery) {
-var script = document.createElement('script');
-script.src = "/js/jquery-2.0.3.min.js";
-document.body.write(script);
-}
+  var disqus_shortname = 'your_disqus_shortname';
+  
+  var disqus_url = 'http://yoursite.com/2020/01/05/关于最近的log4j的漏洞复现及分析/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
 </script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
 
   <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
   <script src="/fancybox/jquery.fancybox.pack.js"></script>
@@ -280,16 +244,6 @@ document.body.write(script);
 
 
 
-    </div>
-    <nav id="mobile-nav" class="mobile-nav-box">
-  <div class="mobile-nav-img mobile-nav-top"></div>
-  
-    <a href="/" class="mobile-nav-link">首页</a>
-  
-    <a href="/archives" class="mobile-nav-link">归档</a>
-  
-  <div class="mobile-nav-img  mobile-nav-bottom"></div>
-</nav>    
   </div>
 </body>
 </html>

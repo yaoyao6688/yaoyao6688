@@ -5,13 +5,16 @@
   
 
   
-  <title>NDK-Build 方式实现JIN | beautiful test</title>
+  <title>NDK-Build 方式实现JIN | Runtest</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
   <meta name="description" content="cmake方式创建也比较稳妥，但是想学学传统NDK-Build方式，谷歌比较推荐cmake编译的方式，cmake方式较为简洁。1 修改app目录下的build.gradle文件关键配置，选择构建项目的编译方式     externalNativeBuild &amp;#123;//        cmake &amp;#123;//            path &amp;quot;CMakeLists.txt&amp;quo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="NDK-Build 方式实现JIN">
 <meta property="og:url" content="http://yoursite.com/2020/02/08/NDK-Build-方式实现JIN/index.html">
-<meta property="og:site_name" content="beautiful test">
+<meta property="og:site_name" content="Runtest">
 <meta property="og:description" content="cmake方式创建也比较稳妥，但是想学学传统NDK-Build方式，谷歌比较推荐cmake编译的方式，cmake方式较为简洁。1 修改app目录下的build.gradle文件关键配置，选择构建项目的编译方式     externalNativeBuild &amp;#123;//        cmake &amp;#123;//            path &amp;quot;CMakeLists.txt&amp;quo">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://i.loli.net/2020/02/08/YrXdmaED3Ltj4J7.png">
@@ -21,72 +24,77 @@
 <meta name="twitter:description" content="cmake方式创建也比较稳妥，但是想学学传统NDK-Build方式，谷歌比较推荐cmake编译的方式，cmake方式较为简洁。1 修改app目录下的build.gradle文件关键配置，选择构建项目的编译方式     externalNativeBuild &amp;#123;//        cmake &amp;#123;//            path &amp;quot;CMakeLists.txt&amp;quo">
 <meta name="twitter:image" content="https://i.loli.net/2020/02/08/YrXdmaED3Ltj4J7.png">
   
-    <link rel="alternate" href="/atom.xml" title="beautiful test" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Runtest" type="application/atom+xml">
   
   
-    <link rel="icon" href="/favicon.png">
+    <link rel="icon" href="/images/default-avatar.jpg">
   
   
     <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
   
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+  <script>
+  let antiquityStorage = window.sessionStorage.getItem('antiquitySessionStorage');
+  if (antiquityStorage == '' || antiquityStorage == null) {
+    var antiquityLoader = '<div id="loaderbox"><div class="loader"><div class="load-roll"><div class="load-top"></div><div class="load-right"></div><div class="load-bottom"></div></div></div></div>';
+    document.write(antiquityLoader);
+    document.body.style.overflow = 'hidden'
+  }
+  </script>
 </head>
 </html>
 <body>
-  <div id="container">
-    <div id="wrap">
+  <div id="fullpage" class="mobile-nav-right">
+    
+      <div id="wrapper" style="background-image: url(/images/test.jpg)" title="为了更安全的互联网">
+    
+    
       <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">beautiful test</a>
-      </h1>
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-right">
       
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
+        <a class="nav-item" href="/" title
         
-          <a class="main-nav-link" href="/">Home</a>
+        >首页</a>
+      
+        <a class="nav-item" href="/archives" title
         
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
-      </div>
-    </div>
+        >归档</a>
+      
+    </nav>
   </div>
 </header>
-      <div class="outer">
-        <section id="main"><article id="post-NDK-Build-方式实现JIN" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/02/08/NDK-Build-方式实现JIN/" class="article-date">
-  <time datetime="2020-02-08T11:55:59.000Z" itemprop="datePublished">2020-02-08</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-NDK-Build-方式实现JIN" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
   
     <h1 class="article-title" itemprop="name">
       NDK-Build 方式实现JIN
     </h1>
   
 
-      </header>
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2020/02/08/NDK-Build-方式实现JIN/" class="article-date">
+  <time datetime="2020-02-08T11:55:59.000Z" itemprop="datePublished">2020-02-08</time>
+</a>
     
-    <div class="article-entry" itemprop="articleBody">
+    
+  </div>
+  
+    <span id="busuanzi_container_page_pv">
+      本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+    </span>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
       
         <p>cmake方式创建也比较稳妥，但是想学学传统NDK-Build方式，谷歌比较推荐cmake编译的方式，cmake方式较为简洁。<br><strong>1 修改app目录下的build.gradle文件</strong><br>关键配置，选择构建项目的编译方式</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">    externalNativeBuild &#123;</span><br><span class="line">//        cmake &#123;</span><br><span class="line">//            path &quot;CMakeLists.txt&quot;</span><br><span class="line">//        &#125;</span><br><span class="line">        ndkBuild &#123;</span><br><span class="line">            path &apos;src/main/jni/Android.mk&apos;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
@@ -106,59 +114,85 @@
 
       
     </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/02/08/NDK-Build-方式实现JIN/" data-id="ck6djoh0d0001vnjhwlr6f9o4" class="article-share-link">Share</a>
-      
-        <a href="http://yoursite.com/2020/02/08/NDK-Build-方式实现JIN/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-    </footer>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
   </div>
   
     
 <nav id="article-nav">
-  
-  
-    <a href="/2020/01/29/hadoop-伪分布式/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">hadoop 伪分布式</div>
-    </a>
-  
+  <div class="article-nav-block">
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2020/01/29/hadoop-伪分布式/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">hadoop 伪分布式</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
 </nav>
 
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  owner: '',
+  repo: '',
+  oauth: {
+    client_id: '',
+    client_secret: '',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
   
 </article>
-
-
-<section id="comments">
-  <div id="disqus_thread">
-    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/code-title.png" title="为了更安全的互联网"></img>
+    <h3 class="avatar-name">
+      
+        泰斯特
+      
+    </h3>
+    <p class="avatar-slogan">
+      搬砖工程师。
+    </p>
   </div>
-</section>
-</section>
-        
-          <aside id="sidebar">
-  
-    
+</div>
+
 
   
     
 
   
     
+
   
     
-  <div class="widget-wrap">
+  
+    
+  <div class="widget-box">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
       <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
     </div>
   </div>
 
-
   
     
-  <div class="widget-wrap">
+  <div class="widget-box">
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
@@ -188,44 +222,46 @@
   </div>
 
   
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 test<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <div class="widget-box">
+    <h3 class="widget-title">友链</h3>
+    <div class="widget">
+      
+        <a style="display: block;" href="https://blog.ssssdl.xyz/" title target='_blank'
+        >ssssdl</a>
+      
+        <a style="display: block;" href="https://lingwu111.github.io/" title target='_blank'
+        >lingwu</a>
+      
+        <a style="display: block;" href="http://blog.0xccc.cc/" title target='_blank'
+        >canxiao</a>
+      
+        <a style="display: block;" href="http://www.vkxss.top/" title target='_blank'
+        >Vk</a>
+      
     </div>
   </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2020 test &nbsp;&nbsp;
+    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">不蒜子告之   阁下是第<span id="busuanzi_value_site_pv"></span>个访客</span>
+  </div>
 </footer>
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
+      <script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
 <script>
-  var disqus_shortname = 'your_disqus_shortname';
-  
-  var disqus_url = 'http://yoursite.com/2020/02/08/NDK-Build-方式实现JIN/';
-  
-  (function(){
-    var dsq = document.createElement('script');
-    dsq.type = 'text/javascript';
-    dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-  })();
+if (!window.jQuery) {
+var script = document.createElement('script');
+script.src = "/js/jquery-2.0.3.min.js";
+document.body.write(script);
+}
 </script>
-
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-
 
   <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
   <script src="/fancybox/jquery.fancybox.pack.js"></script>
@@ -235,6 +271,16 @@
 
 
 
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
   </div>
 </body>
 </html>

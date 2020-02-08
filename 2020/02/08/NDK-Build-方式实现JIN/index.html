@@ -5,15 +5,21 @@
   
 
   
-  <title>beautiful test</title>
+  <title>NDK-Build 方式实现JIN | beautiful test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="beautiful test">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="cmake方式创建也比较稳妥，但是想学学传统NDK-Build方式，谷歌比较推荐cmake编译的方式，cmake方式较为简洁。1 修改app目录下的build.gradle文件关键配置，选择构建项目的编译方式     externalNativeBuild &amp;#123;//        cmake &amp;#123;//            path &amp;quot;CMakeLists.txt&amp;quo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NDK-Build 方式实现JIN">
+<meta property="og:url" content="http://yoursite.com/2020/02/08/NDK-Build-方式实现JIN/index.html">
 <meta property="og:site_name" content="beautiful test">
+<meta property="og:description" content="cmake方式创建也比较稳妥，但是想学学传统NDK-Build方式，谷歌比较推荐cmake编译的方式，cmake方式较为简洁。1 修改app目录下的build.gradle文件关键配置，选择构建项目的编译方式     externalNativeBuild &amp;#123;//        cmake &amp;#123;//            path &amp;quot;CMakeLists.txt&amp;quo">
 <meta property="og:locale" content="en">
+<meta property="og:image" content="https://i.loli.net/2020/02/08/YrXdmaED3Ltj4J7.png">
+<meta property="og:updated_time" content="2020-02-08T11:56:47.066Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="beautiful test">
+<meta name="twitter:title" content="NDK-Build 方式实现JIN">
+<meta name="twitter:description" content="cmake方式创建也比较稳妥，但是想学学传统NDK-Build方式，谷歌比较推荐cmake编译的方式，cmake方式较为简洁。1 修改app目录下的build.gradle文件关键配置，选择构建项目的编译方式     externalNativeBuild &amp;#123;//        cmake &amp;#123;//            path &amp;quot;CMakeLists.txt&amp;quo">
+<meta name="twitter:image" content="https://i.loli.net/2020/02/08/YrXdmaED3Ltj4J7.png">
   
     <link rel="alternate" href="/atom.xml" title="beautiful test" type="application/atom+xml">
   
@@ -60,9 +66,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-NDK-Build-方式实现JIN" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-NDK-Build-方式实现JIN" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/02/08/NDK-Build-方式实现JIN/" class="article-date">
   <time datetime="2020-02-08T11:55:59.000Z" itemprop="datePublished">2020-02-08</time>
@@ -75,8 +79,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
+    <h1 class="article-title" itemprop="name">
+      NDK-Build 方式实现JIN
     </h1>
   
 
@@ -111,17 +115,26 @@
     </footer>
   </div>
   
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/01/29/hadoop-伪分布式/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">hadoop 伪分布式</div>
+    </a>
+  
+</nav>
+
+  
 </article>
 
 
-  
-
-
-  <nav id="page-nav">
-    
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
-  </nav>
-
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
 </section>
         
           <aside id="sidebar">
@@ -199,11 +212,13 @@
 <script>
   var disqus_shortname = 'your_disqus_shortname';
   
+  var disqus_url = 'http://yoursite.com/2020/02/08/NDK-Build-方式实现JIN/';
+  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>

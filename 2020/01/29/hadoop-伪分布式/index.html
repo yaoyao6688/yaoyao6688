@@ -94,10 +94,10 @@
 <h5 id="配置HDFS并运行MapReduce"><a href="#配置HDFS并运行MapReduce" class="headerlink" title="配置HDFS并运行MapReduce"></a>配置HDFS并运行MapReduce</h5><p>1 配置hadoop的hadoop-env.sh</p>
 <p><code>export JAVA_HOME=/opt/java/jdk1.8.0_231</code></p>
 <p>2 /etc/hadoop/core-site.xml</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!--修改文件系统 --&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;fs.defaultFS&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;!--配置hadoop运行时产生文件的存储目录 --&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">        &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;/opt/hadoop/hadoop-2.7.7/data/tmp&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;!--修改文件系统 --&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;fs.defaultFS&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;!--配置hadoop运行时产生文件的存储目录 --&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">        &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;/opt/hadoop/hadoop-2.7.7/data/tmp&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
 
 <p>etc/hadoop/hdfs-site.xml</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!--指定HDFS副本的数量 --&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;dfs.replication&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;1&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;!--指定HDFS副本的数量 --&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;dfs.replication&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;1&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure>
 
 <p>2 启动集群</p>
 <p>格式化namenode（第一次启动时格式化，以后不要经常格式化）</p>
@@ -106,10 +106,10 @@
 <p>启动NameNode</p>
 <p><code>sbin/hadoop-daemon.sh start namenode</code></p>
 <p>启动DataNode</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">sbin/hadoop-daemon.sh start datanode</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sbin/hadoop-daemon.sh start datanode</span><br></pre></td></tr></table></figure>
 
 <p>Jps</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/opt/hadoop/hadoop-2.7.7# jps</span><br><span class="line">3459 DataNode</span><br><span class="line">3556 Jps</span><br><span class="line">3367 NameNode</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/opt/hadoop/hadoop-2.7.7# jps</span><br><span class="line">3459 DataNode</span><br><span class="line">3556 Jps</span><br><span class="line">3367 NameNode</span><br></pre></td></tr></table></figure>
 
 <p>9000为RPC端口</p>
 <p>50070为http端口</p>
@@ -121,15 +121,15 @@
 <p>配置JAVA_HMOE</p>
 <p><code>export JAVA_HOME=/opt/java/jdk1.8.0_231</code></p>
 <p>2 配置yarn-site.xml</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!-- Reduce 获取数据方式--&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">        &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;mapreduce_shuffle&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br><span class="line"> &lt;!-- 指定YARN的ResourceManager的地址--&gt;</span><br><span class="line"> &lt;property&gt;</span><br><span class="line">        &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;ubuntu&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;!-- Reduce 获取数据方式--&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">        &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;mapreduce_shuffle&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br><span class="line"> &lt;!-- 指定YARN的ResourceManager的地址--&gt;</span><br><span class="line"> &lt;property&gt;</span><br><span class="line">        &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;ubuntu&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure>
 
 <p>3 配置mapred-env.sh</p>
 <p>配置JAVA_HMOE</p>
 <p><code>export JAVA_HOME=/opt/java/jdk1.8.0_231</code></p>
 <p>4配置mapred-site.xml</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">cp mapred-site.xml.template mapred-site.xml</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cp mapred-site.xml.template mapred-site.xml</span><br></pre></td></tr></table></figure>
 
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!--指定MR运行在YARN上 --&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">        &lt;name&gt;mapreduce.framework.name&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;yarn&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;!--指定MR运行在YARN上 --&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">        &lt;name&gt;mapreduce.framework.name&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;yarn&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure>
 
 <p>5启动集群</p>
 <p>  启动前必须保证namenode和datanode已经启动</p>
@@ -139,22 +139,22 @@
 <p>yarn-daemon.sh start nodemanager</p>
 <p>yarn-daemon.sh stop nodemanager</p>
 <p>8088 resourcemanager端口</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">问题排查vim /etc/hosts      localhost对应ip不为127</span><br><span class="line"></span><br><span class="line">service network-manager restart</span><br><span class="line"></span><br><span class="line">netstat -tpnl | grep java</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">问题排查vim /etc/hosts      localhost对应ip不为127</span><br><span class="line"></span><br><span class="line">service network-manager restart</span><br><span class="line"></span><br><span class="line">netstat -tpnl | grep java</span><br></pre></td></tr></table></figure>
 
 <p><img src="https://i.loli.net/2020/01/29/png4Zr8JwOWlFGU.png" alt="image.png"></p>
 <p>上传文件到服务器：</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">hadoop fs -put wcinput /</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">hadoop fs -put wcinput /</span><br></pre></td></tr></table></figure>
 
 <p>执行计算命令(在文件系统会多处两个文件夹)<br>hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.7.jar wordcount /wcinput /wcoutput</p>
 <p><img src="https://i.loli.net/2020/01/29/ZLGnfxsMbuAWS8Q.png" alt="image.png"></p>
 <p>统计</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/opt/hadoop/hadoop-2.7.7# hadoop fs -cat /wcoutput/*</span><br><span class="line">hadoop	1</span><br><span class="line">hdaoop	1</span><br><span class="line">mapreduce	1</span><br><span class="line">test	2</span><br><span class="line">yarn	1</span><br></pre></td></tr></table></figure></div>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/opt/hadoop/hadoop-2.7.7# hadoop fs -cat /wcoutput/*</span><br><span class="line">hadoop	1</span><br><span class="line">hdaoop	1</span><br><span class="line">mapreduce	1</span><br><span class="line">test	2</span><br><span class="line">yarn	1</span><br></pre></td></tr></table></figure>
 
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/01/29/hadoop-伪分布式/" data-id="ck5ziihdm0006n8jhwp78w7gw" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/01/29/hadoop-伪分布式/" data-id="ck6djoh0k0009vnjhfq027jna" class="article-share-link">Share</a>
       
         <a href="http://yoursite.com/2020/01/29/hadoop-伪分布式/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -164,6 +164,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2020/02/08/NDK-Build-方式实现JIN/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          NDK-Build 方式实现JIN
+        
+      </div>
+    </a>
   
   
     <a href="/2020/01/12/深入剖析代审的线程安全问题/" id="article-nav-older" class="article-nav-link-wrap">
@@ -198,7 +207,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
     </div>
   </div>
 
@@ -209,6 +218,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
+          </li>
         
           <li>
             <a href="/2020/01/29/hadoop-伪分布式/">hadoop 伪分布式</a>
@@ -224,10 +237,6 @@
         
           <li>
             <a href="/2020/01/04/关于安卓SSL单项校验和双向校验的思考和总结/">关于安卓SSL单项校验和双向校验的思考和总结</a>
-          </li>
-        
-          <li>
-            <a href="/2019/12/12/Get-Some-Keys/">Get Some Keys</a>
           </li>
         
       </ul>

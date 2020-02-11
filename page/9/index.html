@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-Bypass-the-HTML-file-suffix-restriction-when-uploading-files" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Java注解" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/12/Bypass-the-HTML-file-suffix-restriction-when-uploading-files/">Bypass the HTML file suffix restriction when uploading files</a>
+      <a class="article-title" href="/2019/10/20/Java注解/">Java注解</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2019/10/12/Bypass-the-HTML-file-suffix-restriction-when-uploading-files/" class="article-date">
-  <time datetime="2019-10-12T12:55:33.000Z" itemprop="datePublished">2019-10-12</time>
+    <a href="/2019/10/20/Java注解/" class="article-date">
+  <time datetime="2019-10-20T05:53:44.000Z" itemprop="datePublished">2019-10-20</time>
 </a>
     
     
@@ -88,23 +88,20 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p><strong>0x01</strong><br>I installed the latest version of monstra CMS and found upload bypass in the system<br><strong>In the latest version(3.0.4), the system forbids HTML suffix name upload, but now it can bypass it.</strong></p>
-<p><img src="https://i.loli.net/2019/10/12/8PwIjNJXZu1TULV.png" alt="图片.png"></p>
-<p><img src="https://i.loli.net/2019/10/12/FenPgaHhEcuR7xI.png" alt="图片.png"></p>
-<p><strong>0x02</strong><br><strong>Vulnerability proof</strong></p>
-<p>You can bypass the file upload limit by putting double quotes before the suffix of HTML </p>
-<p>1  Visit website http://[address]:[port]/[app_path]/admin/index.php?id=filesmanager with login</p>
-<p>2  Save html codes with ‘.png’extensions. and upload it like below.</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;html&gt; </span><br><span class="line">    &lt;head&gt; </span><br><span class="line">	    &lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;</span><br><span class="line">        &lt;title&gt;hacker&lt;/title&gt; </span><br><span class="line">    &lt;/head&gt; </span><br><span class="line">    &lt;body&gt; </span><br><span class="line">     &lt;svg/onload=alert(document.cookie)&gt;</span><br><span class="line">    &lt;/body&gt; </span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></div>
+        <p>温故而知新，总结一下<br><strong>0x01 注解基础知识</strong><br>注解和jdk版本关系：从JDK5开始<br>什么是注解：代码的标签，是源代码的元数据。<br>注解的作用：读懂别人的代码，简化代码的配置<br>注解的本质：1，附属于代码，依赖于方法，类，属性存在<br>         2，本身没有任何作用，在恰当的时候有外部程序解析产生<br>注解的分类：1，JDk内置注解（@Override、@Derprecated、@SupperWarnings）<br>         2，第三方框架的注解：<br>          Spring：@Autowired @Controller @Service @Respository<br>          Mybatis:@InsertProvider @Update @Options<br>         3,按照生命周期进行分类：<br>          （1），SOURCE源码注解<br>          （2），CLASS编译时注解：存在于源码及class文件中<br>          （3）, RUNTIME运行时注解：注解保留到运行时，甚至还会影响运行逻辑，@autowired属于运行时注解</p>
+<p>元注解：注解的注解<br>   @Retention 定义生命周期，可选值：SOURCE,CLASS，RUNTIME<br>   @Documented 文档化注解<br>   @Inherited 注解是自动继承的<br>   @Target 注解的使用范围</p>
+<p>   自定义注解无法规则：成员以无参方式声明；可以使用deafault关键字指定默认值，成员类型是受限制的，合法的类型包括<br>   注解类可以没有成员，没有成员的注解称为标识注解</p>
+<p><strong>0x02举个例子</strong><br>   编辑器环境：IDEA<br>   定义一个注解类：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import javax.management.relation.RelationType;</span><br><span class="line">import java.lang.annotation.*;</span><br><span class="line"></span><br><span class="line">@Target (&#123;ElementType.METHOD,ElementType.TYPE&#125;)</span><br><span class="line">@Retention (RetentionPolicy.RUNTIME)//注解可以保留到程序运行的时候</span><br><span class="line">@Inherited</span><br><span class="line">@Documented</span><br><span class="line">public @interface Description &#123;//注解的属性</span><br><span class="line">    String desc();//描述内容</span><br><span class="line">    String author();//描述作者</span><br><span class="line">    int age() default 18;//描述年龄</span><br><span class="line">    /*</span><br><span class="line">     */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p><img src="https://i.loli.net/2019/10/12/IKx9s3GArfTSLZa.png" alt="图片.png"></p>
-<p>Click the uploaded file and Grab the packet and change the suffix name to XXX””.html at filename，This circumvents this limitation.</p>
-<p><img src="https://i.loli.net/2019/10/12/gK1hOqvHtEIAJNL.png" alt="图片.png"></p>
-<p><img src="https://i.loli.net/2019/10/12/tgcb9dJELnNDrx8.png" alt="图片.png"></p>
-<p>4 move to http://[address]:[port]/[app_path]/public/uploads/[uploaded file]</p>
-<p> You can see that you executed HTML and JS code，If you access this file,  you can get the administrator’s cookie and execute any JS code</p>
-<p><img src="https://i.loli.net/2019/10/12/9oY3Vsy1IwCehjf.png" alt="图片.png"></p>
+<p>定义一个普通类</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">@Description (</span><br><span class="line">        desc = &quot;a&quot;,</span><br><span class="line">        author = &quot;b&quot;,</span><br><span class="line">        age = 19</span><br><span class="line">)</span><br><span class="line">public class testnew &#123;</span><br><span class="line">  String desc;</span><br><span class="line">  String author;</span><br><span class="line">  int age;</span><br><span class="line"></span><br><span class="line">    public String getDesc() &#123;</span><br><span class="line">        return desc;</span><br><span class="line">    &#125;</span><br><span class="line">    @Description (</span><br><span class="line">            desc = &quot;a&quot;,</span><br><span class="line">            author = &quot;b&quot;,</span><br><span class="line">            age = 19</span><br><span class="line">    )</span><br><span class="line">    public void setDesc(String desc) &#123;</span><br><span class="line">        this.desc = desc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getAuthor() &#123;</span><br><span class="line">        return author;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAuthor(String author) &#123;</span><br><span class="line">        this.author = author;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getAge() &#123;</span><br><span class="line">        this.age=1;</span><br><span class="line">        return age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAge(int age) &#123;</span><br><span class="line"></span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
+<p>main方法读取类的注解，一些知名的框架通过注解来实现配置简单化，这个时候往往用到了java反射机制来实现，这也就是为什么有些课程会讲到框架的底层靠反射实现</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import com.sun.tools.javac.comp.Annotate;</span><br><span class="line"></span><br><span class="line">import java.io.File;</span><br><span class="line">import java.lang.annotation.Annotation;</span><br><span class="line">import java.lang.reflect.Field;</span><br><span class="line">import java.lang.reflect.InvocationTargetException;</span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(&quot;Hello World!&quot;);</span><br><span class="line">        test1();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void test1()&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            //使用类加载器</span><br><span class="line">            Class clazz = Class.forName ( &quot;testnew&quot;);</span><br><span class="line">            //类是否有注解</span><br><span class="line">            boolean isClsExits =clazz.isAnnotationPresent ( Description.class );//</span><br><span class="line">            System.out.println (isClsExits);</span><br><span class="line"></span><br><span class="line">            if (isClsExits)&#123;</span><br><span class="line">                Description test=(Description)clazz.getAnnotation(Description.class);</span><br><span class="line">                System.out.println (test.author ());</span><br><span class="line">            &#125;</span><br><span class="line">            //获取类的注解</span><br><span class="line">            Annotation[] annotations=clazz.getAnnotations ();</span><br><span class="line"></span><br><span class="line">            for (Annotation a :annotations)&#123;</span><br><span class="line">                System.out.println (a);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            //获取 方法的注解</span><br><span class="line">            Method[] met =clazz.getMethods ();</span><br><span class="line">            for (Method method :met)&#123;</span><br><span class="line">                boolean ismetExits =method.isAnnotationPresent (Description.class );</span><br><span class="line">                if (ismetExits)&#123;</span><br><span class="line">                Description des =(Description)method.getAnnotation (Description.class);</span><br><span class="line">                //获取方法的注解的某个属性</span><br><span class="line">                    System.out.println (des.age ());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            System.out.println (clazz.getName ());//获取包名和类名</span><br><span class="line">            System.out.println (clazz.getSimpleName ());//获取类名</span><br><span class="line">            //调用类的方式1</span><br><span class="line">//            Object object = clazz.newInstance();</span><br><span class="line">            Method method = clazz.getMethod(&quot;getAge&quot;);//获取类的某个方法</span><br><span class="line">//            System.out.println(method.invoke(object));</span><br><span class="line">            //调用类的方式2</span><br><span class="line">            Object obj = method.invoke(clazz.newInstance());</span><br><span class="line"></span><br><span class="line">            System.out.println(obj);</span><br><span class="line">            //获取类的所有方法</span><br><span class="line">//            Method[] methods1 = clazz.getMethods();</span><br><span class="line">//            for (Method method2 : methods1) &#123;</span><br><span class="line">//                //获取类中方法的全名(eg:public com.test.Main())</span><br><span class="line">//                System.out.println(method2);</span><br><span class="line">//            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (NoSuchMethodException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (IllegalAccessException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (InstantiationException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (InvocationTargetException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>main方法运行结果：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Hello World!</span><br><span class="line">true</span><br><span class="line">b</span><br><span class="line">@Description(age=19, desc=a, author=b)</span><br><span class="line">19</span><br><span class="line">testnew</span><br><span class="line">testnew</span><br><span class="line">1</span><br></pre></td></tr></table></figure></div>
       
     </div>
     
@@ -118,7 +115,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/8/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/10/">Next &raquo;</a>
   </nav>
 
 
@@ -165,6 +162,14 @@
       <ul>
         
           <li>
+            <a href="/2020/02/11/Activity及Intent/">Activity及Intent</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/11/Android布局及控件/">Android布局及控件</a>
+          </li>
+        
+          <li>
             <a href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
           </li>
         
@@ -174,14 +179,6 @@
         
           <li>
             <a href="/2020/01/12/深入剖析代审的线程安全问题/">深入剖析代审的线程安全问题</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/05/关于最近的log4j的漏洞复现及分析/">关于最近log4j的漏洞复现及分析</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/04/关于安卓SSL单项校验和双向校验的思考和总结/">关于安卓SSL单项校验和双向校验的思考和总结</a>
           </li>
         
       </ul>

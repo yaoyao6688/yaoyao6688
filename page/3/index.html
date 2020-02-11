@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-深入剖析代审的线程安全问题" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-NDK-Build-方式实现JIN" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/01/12/深入剖析代审的线程安全问题/">深入剖析代审的线程安全问题</a>
+      <a class="article-title" href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2020/01/12/深入剖析代审的线程安全问题/" class="article-date">
-  <time datetime="2020-01-11T16:14:10.000Z" itemprop="datePublished">2020-01-12</time>
+    <a href="/2020/02/08/NDK-Build-方式实现JIN/" class="article-date">
+  <time datetime="2020-02-08T11:55:59.000Z" itemprop="datePublished">2020-02-08</time>
 </a>
     
     
@@ -88,32 +88,27 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p><strong>作者：Runtest</strong><br>最近对JAVA代码安全的学习越来越感兴趣，今天就来聊一聊线程安全,想学习线程安全，就看看哪些情况不安全，写代码来验证那些比较抽象的东西来增加对代码的理解和学习。</p>
-<h3 id="0x01-非局部变量和方法参数"><a href="#0x01-非局部变量和方法参数" class="headerlink" title="0x01 非局部变量和方法参数"></a>0x01 非局部变量和方法参数</h3><p>方法传递的参数也相当于局部，局部变量在线程栈中存放，调用地址为随机地址，共享变量在方法区，堆空间<br>code</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">class Threadtypesec implements Runnable&#123;</span><br><span class="line">    private volatile int count = 5;</span><br><span class="line">    @Override</span><br><span class="line">    public  void run() &#123;</span><br><span class="line">//synchronized</span><br><span class="line">//        int count = 5;</span><br><span class="line">        count=count-1;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+&quot;当前值为&quot;+count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+        <p>cmake方式创建也比较稳妥，但是想学学传统NDK-Build方式，谷歌比较推荐cmake编译的方式，cmake方式较为简洁。<br><strong>1 修改app目录下的build.gradle文件</strong><br>关键配置，选择构建项目的编译方式</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">    externalNativeBuild &#123;</span><br><span class="line">//        cmake &#123;</span><br><span class="line">//            path &quot;CMakeLists.txt&quot;</span><br><span class="line">//        &#125;</span><br><span class="line">        ndkBuild &#123;</span><br><span class="line">            path &apos;src/main/jni/Android.mk&apos;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>创建多个线程，执行run方法。</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Runnable runnable = new Threadtypesec();</span><br><span class="line">Thread[] threads1 = new Thread[5];</span><br><span class="line">for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">    threads1[i] = new Thread(runnable,&quot;当前线程&quot;+(i+1));</span><br><span class="line">&#125;</span><br><span class="line">for(Thread thread1 : threads1) &#123;</span><br><span class="line">    thread1.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>配置文件：Android.mk</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># 当前模块路径，即Android.mk所在的文件目录</span><br><span class="line">LOCAL_PATH       :=  $(call my-dir)</span><br><span class="line"></span><br><span class="line"># 开始清除LOCAL_XXX变量</span><br><span class="line">include              $(CLEAR_VARS)</span><br><span class="line"></span><br><span class="line"># 动态库模块名称，Java代码中中加载动态库中使用System.loadLibrary(&quot;helloworld_jni&quot;);</span><br><span class="line">LOCAL_MODULE     :=  helloworld_jni</span><br><span class="line"></span><br><span class="line"># 编译的C/C++源文件，可多个，以空格隔开</span><br><span class="line">LOCAL_SRC_FILES  :=  helloworld.cpp</span><br><span class="line"></span><br><span class="line"># 开始动态编译生成动态库</span><br><span class="line">include $(BUILD_SHARED_LIBRARY)</span><br></pre></td></tr></table></figure></div>
 
-<p>运行结果如下，多线程操作类里面的公共变量导致操作值未能及时更新减一，猜测那些条件竞争漏洞也是基础此类的原理</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">当前线程2当前值为3</span><br><span class="line">当前线程3当前值为2</span><br><span class="line">当前线程1当前值为3</span><br><span class="line">当前线程5当前值为0</span><br><span class="line">当前线程4当前值为1</span><br></pre></td></tr></table></figure></div>
+<p>Application.mk</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># 需要编译的ABI</span><br><span class="line">APP_ABI :=armeabi-v7a x86 x86_64</span><br></pre></td></tr></table></figure></div>
 
-<h3 id="0x02-安全的写法"><a href="#0x02-安全的写法" class="headerlink" title="0x02 安全的写法"></a>0x02 安全的写法</h3><p>实现安全的方法不止一种</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">class Threadtypesec implements Runnable&#123;</span><br><span class="line">    private volatile int count = 5;</span><br><span class="line">    @Override</span><br><span class="line">    public synchronized void run() &#123;</span><br><span class="line">//synchronized</span><br><span class="line">//        int count = 5;</span><br><span class="line">        count=count-1;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+&quot;当前值为&quot;+count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p><strong>2 在src/main下创建HelloWorldJNI.class<br>在MainActivity会调用这个class</strong></p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">package ndk.runtest.ndk_test2;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class HelloWorldJNI &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    // 加载Native动态库（so库），动态库的名称后面在mk文件中会使用到</span><br><span class="line">    static &#123;</span><br><span class="line">        System.loadLibrary(&quot;helloworld_jni&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    // 定义Native方法</span><br><span class="line">    public native String getString();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public native String setString(String text);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>用synchronized修饰方法，即为同步的方法或者和区，多线程执行同一方法下，单个线程会先获取方法区的锁，执行完后释放锁，整个过程属于JVM管理，这里要区别synchronized和ReentrantLock的实现原理，略有不同，参考：<a href="https://www.cnblogs.com/revel171226/p/9411131.html" target="_blank" rel="noopener">https://www.cnblogs.com/revel171226/p/9411131.html</a></p>
-<h3 id="0x03-单例模式下线程安全"><a href="#0x03-单例模式下线程安全" class="headerlink" title="0x03 单例模式下线程安全"></a>0x03 单例模式下线程安全</h3><p>参考：<a href="https://www.jianshu.com/p/3bfd916f2bb2" target="_blank" rel="noopener">https://www.jianshu.com/p/3bfd916f2bb2</a><br>不安全的写法：</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Singlesec &#123;</span><br><span class="line">    private static Singlesec instance;</span><br><span class="line">    private Singlesec ()&#123;&#125;</span><br><span class="line"></span><br><span class="line">    public static Singlesec getSinglesec() &#123;</span><br><span class="line">        if (instance == null) &#123;</span><br><span class="line">            instance = new Singlesec();</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></div>
+<p><strong>3 在main目录下 执行以下命令，创建本地方法头文件,生成的文件在main下的jni目录中</strong><br><code>wenyao:main xiongxiong$ javah -d jni -classpath ./Java  ndk.runtest.ndk_test2.HelloWorldJNI</code></p>
+<p>内容如下：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">/* DO NOT EDIT THIS FILE - it is machine generated */</span><br><span class="line">#include &lt;jni.h&gt;</span><br><span class="line">/* Header for class ndk_runtest_ndk_test2_HelloWorldJNI */</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#ifndef _Included_ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line">#define _Included_ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">extern &quot;C&quot; &#123;</span><br><span class="line">#endif</span><br><span class="line">/*</span><br><span class="line"> * Class:     ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line"> * Method:    getString</span><br><span class="line"> * Signature: ()Ljava/lang/String;</span><br><span class="line"> */</span><br><span class="line">JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_getString</span><br><span class="line">  (JNIEnv *, jobject);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * Class:     ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line"> * Method:    setString</span><br><span class="line"> * Signature: (Ljava/lang/String;)Ljava/lang/String;</span><br><span class="line"> */</span><br><span class="line">JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_setString</span><br><span class="line">  (JNIEnv *, jobject, jstring);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">&#125;</span><br><span class="line">#endif</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure></div>
 
-<p><img src="https://i.loli.net/2020/01/12/xBbWti1Rquo9Vg7.png" alt="图片.png"><br>单例模式：在程序运行过程中保证仅有一个对象被创建，以下代码进行了是双重校验，volatile变量保证了singleton的内存可见性以及防止指令重排序，synchronized原语确保创建安全</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Singlesec &#123;</span><br><span class="line">    private volatile static Singlesec instance;</span><br><span class="line">    private Singlesec ()&#123;&#125;</span><br><span class="line">    public static Singlesec getSinglesec() &#123;</span><br><span class="line">        if (instance == null) &#123;</span><br><span class="line">            synchronized (Singlesec.class) &#123;</span><br><span class="line">                if (instance == null) &#123;</span><br><span class="line">                    instance = new Singlesec();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+<p><strong>4 创建cpp文件，在jni目录引入 刚才的头文件，实现具体方法</strong></p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">//</span><br><span class="line">// Created by wenyao on 2020/2/8.</span><br><span class="line">//</span><br><span class="line"></span><br><span class="line"># include &lt;jni.h&gt;</span><br><span class="line"># include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;cstring&gt;</span><br><span class="line"># include &quot;ndk_runtest_ndk_test2_HelloWorldJNI.h&quot;</span><br><span class="line"></span><br><span class="line"># ifdef _cplusplus</span><br><span class="line">extern &quot;C&quot;</span><br><span class="line">&#123;</span><br><span class="line"># endif</span><br><span class="line"></span><br><span class="line">    JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_getString(JNIEnv *env, jobject obj)&#123;</span><br><span class="line">        return env -&gt; NewStringUTF(&quot;Get Hello world JNI!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_setString(JNIEnv *env, jobject obj, jstring str)&#123;</span><br><span class="line">        char* jnistr = (char *) env-&gt;GetStringUTFChars(str, NULL);</span><br><span class="line">        strcat(jnistr,&quot;: I am JNI&quot;);</span><br><span class="line">        return env -&gt; NewStringUTF(jnistr);</span><br><span class="line">    &#125;</span><br><span class="line"># ifdef _cplusplus</span><br><span class="line">&#125;</span><br><span class="line"># endif</span><br></pre></td></tr></table></figure></div>
 
-<p>验证<br><img src="https://i.loli.net/2020/01/11/cTXs7aKzyAW5LZj.png" alt="图片.png"><br>使用下面这种方法，在类被加载的时候创建实例,所以线程是安全的</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Singlesec &#123;</span><br><span class="line">    private static Singlesec instance = new Singlesec();</span><br><span class="line">    private Singlesec ()&#123;&#125;</span><br><span class="line">    public static Singlesec getInstance() &#123;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
-
-<p><img src="https://i.loli.net/2020/01/12/pLQehDk1VzvsgAH.png" alt="图片.png"><br>至于构造方法为什么被私有化，是为了防止其他class创建<br><img src="https://i.loli.net/2020/01/11/m75KSwjzI9MQlXD.png" alt="图片.png"></p>
-<h3 id="0x04-Spring中单例模式安全问题"><a href="#0x04-Spring中单例模式安全问题" class="headerlink" title="0x04 Spring中单例模式安全问题"></a>0x04 Spring中单例模式安全问题</h3><p>为什么要说spring系列的框架呢，因为平时遇到最多的代码使用的基本都是Spring系列的，spring中线程安全性依赖于ThreadLocal，ThreadLocal可以理解为synchronized类似的基于JVM实现的线程安全函数，只不过ThreadLocal实现类似于hashmap。<br>强力推荐读这篇文章<a href="https://www.jianshu.com/p/e200e96a41a0" target="_blank" rel="noopener">https://www.jianshu.com/p/e200e96a41a0</a></p>
-<h3 id="夜深了，晚安"><a href="#夜深了，晚安" class="headerlink" title="夜深了，晚安"></a>夜深了，晚安</h3><p>夜已深，改天详细写Spring中一些列的场景的安全问题。</p>
+<p><strong>5 在main目录运行：ndk-build生成so文件</strong></p>
+<p><strong>6 编译项目并运行</strong><br><img src="https://i.loli.net/2020/02/08/YrXdmaED3Ltj4J7.png" alt="A14DF098-B6E7-42D3-996B-5B3435223618.png"></p>
 
       
     </div>
@@ -128,7 +123,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&laquo; Prev</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/4/">Next &raquo;</a>
   </nav>
 
 
@@ -175,6 +170,14 @@
       <ul>
         
           <li>
+            <a href="/2020/02/11/Activity及Intent/">Activity及Intent</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/11/Android布局及控件/">Android布局及控件</a>
+          </li>
+        
+          <li>
             <a href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
           </li>
         
@@ -184,14 +187,6 @@
         
           <li>
             <a href="/2020/01/12/深入剖析代审的线程安全问题/">深入剖析代审的线程安全问题</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/05/关于最近的log4j的漏洞复现及分析/">关于最近log4j的漏洞复现及分析</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/04/关于安卓SSL单项校验和双向校验的思考和总结/">关于安卓SSL单项校验和双向校验的思考和总结</a>
           </li>
         
       </ul>

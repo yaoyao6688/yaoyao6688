@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>Android布局及控件 | Runtest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="学习重点：使用Intent在Activity指尖的跳转以及传值        Activity的生命周期1 基本了解的知识点配置文件 &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&amp;lt;manifest xmlns:android=&amp;quot;http://schemas.android.com/apk/res/a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android布局及控件">
+<meta property="og:url" content="http://yoursite.com/2020/02/11/Android布局及控件/index.html">
+<meta property="og:site_name" content="Runtest">
+<meta property="og:description" content="学习重点：使用Intent在Activity指尖的跳转以及传值        Activity的生命周期1 基本了解的知识点配置文件 &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&amp;lt;manifest xmlns:android=&amp;quot;http://schemas.android.com/apk/res/a">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://i.loli.net/2020/02/10/ie4joV79tw1BEOZ.png">
+<meta property="og:image" content="https://i.loli.net/2020/02/10/63crXWHvoha2yDf.png">
+<meta property="og:updated_time" content="2020-02-11T07:50:46.827Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android布局及控件">
+<meta name="twitter:description" content="学习重点：使用Intent在Activity指尖的跳转以及传值        Activity的生命周期1 基本了解的知识点配置文件 &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&amp;lt;manifest xmlns:android=&amp;quot;http://schemas.android.com/apk/res/a">
+<meta name="twitter:image" content="https://i.loli.net/2020/02/10/ie4joV79tw1BEOZ.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Runtest" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.jpg">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+  <script>
+  let antiquityStorage = window.sessionStorage.getItem('antiquitySessionStorage');
+  if (antiquityStorage == '' || antiquityStorage == null) {
+    var antiquityLoader = '<div id="loaderbox"><div class="loader"><div class="load-roll"><div class="load-top"></div><div class="load-right"></div><div class="load-bottom"></div></div></div></div>';
+    document.write(antiquityLoader);
+    document.body.style.overflow = 'hidden'
+  }
+  </script>
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-right">
+    
+      <div id="wrapper" style="background-image: url(/images/test.jpg)" title="为了更安全的互联网">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-right">
+      
+        <a class="nav-item" href="/" title
+        
+        >首页</a>
+      
+        <a class="nav-item" href="/archives" title
+        
+        >归档</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-Android布局及控件" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      Android布局及控件
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2020/02/11/Android布局及控件/" class="article-date">
+  <time datetime="2020-02-11T07:48:06.000Z" itemprop="datePublished">2020-02-11</time>
+</a>
+    
+    
+  </div>
+  
+    <span id="busuanzi_container_page_pv">
+      本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+    </span>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p><strong>学习重点</strong>：使用Intent在Activity指尖的跳转以及传值<br>        Activity的生命周期<br><strong>1 基本了解的知识点</strong><br>配置文件</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    package=&quot;ndk.runtest.helloapp&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;application</span><br><span class="line">        android:allowBackup=&quot;true&quot;</span><br><span class="line">        android:icon=&quot;@mipmap/ic_launcher&quot;</span><br><span class="line">        android:label=&quot;@string/app_name&quot;</span><br><span class="line">        android:roundIcon=&quot;@mipmap/ic_launcher_round&quot;</span><br><span class="line">        android:supportsRtl=&quot;true&quot;</span><br><span class="line">        android:theme=&quot;@style/AppTheme&quot;&gt;</span><br><span class="line">        &lt;activity android:name=&quot;.MainActivity&quot;&gt;</span><br><span class="line">            &lt;intent-filter&gt;</span><br><span class="line">                &lt;action android:name=&quot;android.intent.action.MAIN&quot; /&gt;</span><br><span class="line"></span><br><span class="line">                &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot; /&gt;</span><br><span class="line">            &lt;/intent-filter&gt;</span><br><span class="line">        &lt;/activity&gt;</span><br><span class="line">    &lt;/application&gt;</span><br><span class="line"></span><br><span class="line">&lt;/manifest&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>intent-filter表示此activity可以被其他应用程序访问到</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void onPause()&#123;</span><br><span class="line">    super.onPause();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>重写此方法实现，可以在Activity中断的时候进行数据保存<br><strong>2 activity跳转</strong><br>Intent机制用来协助应用程序之间的交互和通讯，描述的内容为动作，涉及数据 以及附加数据<br>具体应用为：<br>(1)通过Context.startActivity()或者Activity.startActivityForResult()启动一个Activity;<br>(2)通过Context.startService()启动一个服务，或者通过Context.bindService()和启动后台服务交互<br>(3)通过广播方法（如Context.sendBroadcast(),Context.sendOrderedBroadcast(),Context.sendSticckyBroadcast()）发送给broadcast receiver </p>
+<p>Intent的分类：<br>（1）隐士Intent，通过Intent Filter实现，一般用于在不同的应用程序之间<br>（2）显示Intent，通过指定Intent组件名称实现，一般用于在知道目标组件名称的前提下，一般用于相同应用程序之间。</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Intent intent = new Intent();</span><br><span class="line">intent.setClass(A.this,B.class);</span><br><span class="line">startActivity(intent);</span><br><span class="line">…………</span><br><span class="line">Intent intent = new Intent(A.this,B.class);</span><br><span class="line">startActivity(intent);</span><br></pre></td></tr></table></figure></div>
+
+<p>实现功能</p>
+<p><img src="https://i.loli.net/2020/02/10/ie4joV79tw1BEOZ.png" alt="image.png"><br>点击button后<br><img src="https://i.loli.net/2020/02/10/63crXWHvoha2yDf.png" alt="image.png"><br>主要配置以及代码，布局文件略：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    package=&quot;ndk.runtest.helloapp&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;application</span><br><span class="line">        android:allowBackup=&quot;true&quot;</span><br><span class="line">        android:icon=&quot;@mipmap/ic_launcher&quot;</span><br><span class="line">        android:label=&quot;@string/app_name&quot;</span><br><span class="line">        android:roundIcon=&quot;@mipmap/ic_launcher_round&quot;</span><br><span class="line">        android:supportsRtl=&quot;true&quot;</span><br><span class="line">        android:theme=&quot;@style/AppTheme&quot;&gt;</span><br><span class="line">        &lt;activity android:name=&quot;.MainActivity&quot;&gt;</span><br><span class="line">            &lt;intent-filter&gt;</span><br><span class="line">                &lt;action android:name=&quot;android.intent.action.MAIN&quot; /&gt;</span><br><span class="line"></span><br><span class="line">                &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot; /&gt;</span><br><span class="line">            &lt;/intent-filter&gt;</span><br><span class="line">        &lt;/activity&gt;</span><br><span class="line">        &lt;activity android:name=&quot;.SecondActivity&quot; android:label=&quot;SecondActivity&quot;&gt;</span><br><span class="line"></span><br><span class="line">        &lt;/activity&gt;</span><br><span class="line">    &lt;/application&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>代码 activity1</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.button);</span><br><span class="line">//        TextView text1=(TextView)findViewById(R.id.fist);</span><br><span class="line">//        text1.setText(&quot;admin&quot;);</span><br><span class="line">        Button button1 = (Button) findViewById(R.id.btnOK);</span><br><span class="line">        button1.setText(&quot;值改变了&quot;);</span><br><span class="line">        button1.setOnClickListener(new View.OnClickListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onClick(View v) &#123;</span><br><span class="line">                Intent intent=new Intent();</span><br><span class="line">                intent.setClass(MainActivity.this,SecondActivity.class);</span><br><span class="line">                startActivity(intent);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>activity2</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class SecondActivity extends AppCompatActivity &#123;</span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p><strong>3隐式Intent</strong><br>创建</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">    @Override</span><br><span class="line">    public void onCreate(Bundle savedInstanceState)&#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.exp);</span><br><span class="line">        Button btn_action=(Button)findViewById(R.id.Exp_action);</span><br><span class="line">        btn_action.setOnClickListener(new View.OnClickListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onClick(View v) &#123;</span><br><span class="line">                Intent intent =new Intent();</span><br><span class="line">                intent.setAction(&quot;com.tang.android.t3.activity.Call&quot;);</span><br><span class="line">                intent.addCategory(&quot;com.tang.android.t3.activity.category1&quot;);</span><br><span class="line">//                intent.addCategory(Intent.CATEGORY_INFO);</span><br><span class="line">//                intent.addCategory(Intent.CATEGORY_DEFAULT);</span><br><span class="line">                intent.setDataAndType(Uri.parse(&quot;http://www.tang.com/&quot;),&quot;text/plain&quot;);</span><br><span class="line">                startActivity(intent);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>配置</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;activity android:name=&quot;.Call&quot; android:label=&quot;@string/intent1&quot;&gt;</span><br><span class="line">          &lt;intent-filter&gt;</span><br><span class="line">              &lt;action android:name=&quot;com.tang.android.t3.activity.Call&quot; /&gt;</span><br><span class="line">              &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot; /&gt;</span><br><span class="line">              &lt;category android:name=&quot;com.tang.android.t3.activity.category1&quot;/&gt;</span><br><span class="line">              &lt;category android:name=&quot;android.intent.category.INFO&quot;/&gt;</span><br><span class="line">              &lt;category android:name=&quot;android.intent.category.APP_MESSAGING&quot;/&gt;</span><br><span class="line">              &lt;category android:name=&quot;android.intent.category.DEFAULT&quot;/&gt;</span><br><span class="line">              &lt;data android:host=&quot;www.tang.com&quot;  android:scheme=&quot;http&quot; android:mimeType=&quot;text/*&quot;/&gt;</span><br><span class="line">          &lt;/intent-filter&gt;</span><br><span class="line">      &lt;/activity&gt;</span><br><span class="line">      &lt;activity android:name=&quot;.Exp&quot; android:label=&quot;Exp&quot;&gt;</span><br><span class="line">          &lt;intent-filter&gt;</span><br><span class="line">              &lt;action android:name=&quot;android.intent.action.MAIN&quot;/&gt;</span><br><span class="line">              &lt;category  android:name=&quot;android.intent.category.LAUNCHER&quot;/&gt;</span><br><span class="line">          &lt;/intent-filter&gt;</span><br><span class="line">      &lt;/activity&gt;</span><br></pre></td></tr></table></figure></div>
+
+
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+      <a href="/2020/02/11/Activity及Intent/" id="article-nav-newer" class="article-nav-link-wrap">
+        <strong class="article-nav-caption"></strong>
+        <div class="article-nav-title">
+          
+            Activity及Intent
+          
+        </div>
+      </a>
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2020/02/08/NDK-Build-方式实现JIN/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">NDK-Build 方式实现JIN</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  owner: '',
+  repo: '',
+  oauth: {
+    client_id: '',
+    client_secret: '',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/code-title.png" title="为了更安全的互联网"></img>
+    <h3 class="avatar-name">
+      
+        泰斯特
+      
+    </h3>
+    <p class="avatar-slogan">
+      搬砖工程师。
+    </p>
+  </div>
+</div>
+
+
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/02/11/Activity及Intent/">Activity及Intent</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/11/Android布局及控件/">Android布局及控件</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
+          </li>
+        
+          <li>
+            <a href="/2020/01/29/hadoop-伪分布式/">hadoop 伪分布式</a>
+          </li>
+        
+          <li>
+            <a href="/2020/01/12/深入剖析代审的线程安全问题/">深入剖析代审的线程安全问题</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+      <div class="widget-box">
+    <h3 class="widget-title">友链</h3>
+    <div class="widget">
+      
+        <a style="display: block;" href="https://blog.ssssdl.xyz/" title target='_blank'
+        >ssssdl</a>
+      
+        <a style="display: block;" href="https://lingwu111.github.io/" title target='_blank'
+        >lingwu</a>
+      
+        <a style="display: block;" href="http://blog.0xccc.cc/" title target='_blank'
+        >canxiao</a>
+      
+        <a style="display: block;" href="http://www.vkxss.top/" title target='_blank'
+        >Vk</a>
+      
+        <a style="display: block;" href="https://syst1m.com/" title target='_blank'
+        >syst1m</a>
+      
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2020 test &nbsp;&nbsp;
+    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">不蒜子告之   阁下是第<span id="busuanzi_value_site_pv"></span>个访客</span>
+  </div>
+</footer>
+      <script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
+<script>
+if (!window.jQuery) {
+var script = document.createElement('script');
+script.src = "/js/jquery-2.0.3.min.js";
+document.body.write(script);
+}
+</script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

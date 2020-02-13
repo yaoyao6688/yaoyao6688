@@ -10,19 +10,19 @@
   
   
   
-  <meta name="description" content="学习重点：使用Intent在Activity指尖的跳转以及传值        Activity的生命周期1 基本了解的知识点配置文件 &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&amp;lt;manifest xmlns:android=&amp;quot;http://schemas.android.com/apk/res/a">
+  <meta name="description" content="学习重点：使用Intent在Activity之间的跳转以及传值        Activity的生命周期1 基本了解的知识点配置文件 &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&amp;lt;manifest xmlns:android=&amp;quot;http://schemas.android.com/apk/res/a">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Activity及Intent">
 <meta property="og:url" content="http://yoursite.com/2020/02/11/Activity及Intent/index.html">
 <meta property="og:site_name" content="Runtest">
-<meta property="og:description" content="学习重点：使用Intent在Activity指尖的跳转以及传值        Activity的生命周期1 基本了解的知识点配置文件 &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&amp;lt;manifest xmlns:android=&amp;quot;http://schemas.android.com/apk/res/a">
+<meta property="og:description" content="学习重点：使用Intent在Activity之间的跳转以及传值        Activity的生命周期1 基本了解的知识点配置文件 &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&amp;lt;manifest xmlns:android=&amp;quot;http://schemas.android.com/apk/res/a">
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://i.loli.net/2020/02/10/ie4joV79tw1BEOZ.png">
 <meta property="og:image" content="https://i.loli.net/2020/02/10/63crXWHvoha2yDf.png">
-<meta property="og:updated_time" content="2020-02-11T07:54:25.224Z">
+<meta property="og:updated_time" content="2020-02-13T05:55:12.565Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Activity及Intent">
-<meta name="twitter:description" content="学习重点：使用Intent在Activity指尖的跳转以及传值        Activity的生命周期1 基本了解的知识点配置文件 &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&amp;lt;manifest xmlns:android=&amp;quot;http://schemas.android.com/apk/res/a">
+<meta name="twitter:description" content="学习重点：使用Intent在Activity之间的跳转以及传值        Activity的生命周期1 基本了解的知识点配置文件 &amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;utf-8&amp;quot;?&amp;gt;&amp;lt;manifest xmlns:android=&amp;quot;http://schemas.android.com/apk/res/a">
 <meta name="twitter:image" content="https://i.loli.net/2020/02/10/ie4joV79tw1BEOZ.png">
   
     <link rel="alternate" href="/atom.xml" title="Runtest" type="application/atom+xml">
@@ -97,7 +97,7 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p><strong>学习重点</strong>：使用Intent在Activity指尖的跳转以及传值<br>        Activity的生命周期<br><strong>1 基本了解的知识点</strong><br>配置文件</p>
+        <p><strong>学习重点</strong>：使用Intent在Activity之间的跳转以及传值<br>        Activity的生命周期<br><strong>1 基本了解的知识点</strong><br>配置文件</p>
 <div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    package=&quot;ndk.runtest.helloapp&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;application</span><br><span class="line">        android:allowBackup=&quot;true&quot;</span><br><span class="line">        android:icon=&quot;@mipmap/ic_launcher&quot;</span><br><span class="line">        android:label=&quot;@string/app_name&quot;</span><br><span class="line">        android:roundIcon=&quot;@mipmap/ic_launcher_round&quot;</span><br><span class="line">        android:supportsRtl=&quot;true&quot;</span><br><span class="line">        android:theme=&quot;@style/AppTheme&quot;&gt;</span><br><span class="line">        &lt;activity android:name=&quot;.MainActivity&quot;&gt;</span><br><span class="line">            &lt;intent-filter&gt;</span><br><span class="line">                &lt;action android:name=&quot;android.intent.action.MAIN&quot; /&gt;</span><br><span class="line"></span><br><span class="line">                &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot; /&gt;</span><br><span class="line">            &lt;/intent-filter&gt;</span><br><span class="line">        &lt;/activity&gt;</span><br><span class="line">    &lt;/application&gt;</span><br><span class="line"></span><br><span class="line">&lt;/manifest&gt;</span><br></pre></td></tr></table></figure></div>
 
 <p>intent-filter表示此activity可以被其他应用程序访问到</p>

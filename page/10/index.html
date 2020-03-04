@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-Java注解" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Get-Some-Keys" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/20/Java注解/">Java注解</a>
+      <a class="article-title" href="/2019/12/12/Get-Some-Keys/">Get Some Keys</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2019/10/20/Java注解/" class="article-date">
-  <time datetime="2019-10-20T05:53:44.000Z" itemprop="datePublished">2019-10-20</time>
+    <a href="/2019/12/12/Get-Some-Keys/" class="article-date">
+  <time datetime="2019-12-12T02:10:54.000Z" itemprop="datePublished">2019-12-12</time>
 </a>
     
     
@@ -88,20 +88,28 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p>温故而知新，总结一下<br><strong>0x01 注解基础知识</strong><br>注解和jdk版本关系：从JDK5开始<br>什么是注解：代码的标签，是源代码的元数据。<br>注解的作用：读懂别人的代码，简化代码的配置<br>注解的本质：1，附属于代码，依赖于方法，类，属性存在<br>         2，本身没有任何作用，在恰当的时候有外部程序解析产生<br>注解的分类：1，JDk内置注解（@Override、@Derprecated、@SupperWarnings）<br>         2，第三方框架的注解：<br>          Spring：@Autowired @Controller @Service @Respository<br>          Mybatis:@InsertProvider @Update @Options<br>         3,按照生命周期进行分类：<br>          （1），SOURCE源码注解<br>          （2），CLASS编译时注解：存在于源码及class文件中<br>          （3）, RUNTIME运行时注解：注解保留到运行时，甚至还会影响运行逻辑，@autowired属于运行时注解</p>
-<p>元注解：注解的注解<br>   @Retention 定义生命周期，可选值：SOURCE,CLASS，RUNTIME<br>   @Documented 文档化注解<br>   @Inherited 注解是自动继承的<br>   @Target 注解的使用范围</p>
-<p>   自定义注解无法规则：成员以无参方式声明；可以使用deafault关键字指定默认值，成员类型是受限制的，合法的类型包括<br>   注解类可以没有成员，没有成员的注解称为标识注解</p>
-<p><strong>0x02举个例子</strong><br>   编辑器环境：IDEA<br>   定义一个注解类：</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import javax.management.relation.RelationType;</span><br><span class="line">import java.lang.annotation.*;</span><br><span class="line"></span><br><span class="line">@Target (&#123;ElementType.METHOD,ElementType.TYPE&#125;)</span><br><span class="line">@Retention (RetentionPolicy.RUNTIME)//注解可以保留到程序运行的时候</span><br><span class="line">@Inherited</span><br><span class="line">@Documented</span><br><span class="line">public @interface Description &#123;//注解的属性</span><br><span class="line">    String desc();//描述内容</span><br><span class="line">    String author();//描述作者</span><br><span class="line">    int age() default 18;//描述年龄</span><br><span class="line">    /*</span><br><span class="line">     */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+        <p><strong>author:RUNTest</strong></p>
+<p><strong>前言</strong><br>渗透测试遇到的几个demo,至此遇到web和移动端的几个案例，写文总结，不忘勤勉。</p>
+<h3 id="0x01-移动端第三方权限"><a href="#0x01-移动端第三方权限" class="headerlink" title="0x01 移动端第三方权限"></a><strong>0x01 移动端第三方权限</strong></h3><p>某次测试中，发现多处SDK厂商的存储桶以及接口控制台权限,不过有些需要脱壳才能获取硬编码信息往往写在com包的配置类，这样方便统一调用。不同SDK可能硬编码位置不同，如视频类SDK，推送类SDK，埋点类SDK需要结合具体业务场景进行发现。<br>案例：<br>dex中定位com包中的所有第三方服务配置url：</p>
+<p><img src="https://i.loli.net/2019/12/12/MXtsUTICSQx69WF.png" alt="图片.png"><br>获取相关信息,可读官方文档定位：<br><img src="https://i.loli.net/2019/12/12/uwgoDkAnGUdzWfy.png" alt="图片.png"><br>POC</p>
+<p><img src="https://i.loli.net/2019/12/12/q62EbDFPrsZLeYA.png" alt="图片.png"></p>
+<h3 id="0x02-短信接口权限"><a href="#0x02-短信接口权限" class="headerlink" title="0x02 短信接口权限"></a><strong>0x02 短信接口权限</strong></h3><p>在以往的渗透测试过程，对网站或者手机验证码这一部分都会想到轰炸，以及验证码绕过和各种逻辑漏洞，然而一些网站要么限制发送的短信次数，要么限制手机号，有的还有验证码，有时候无法绕过人家的限制，这个时候，问题就又回归到了信息搜集。在信息搜集的啥时候多关注一些秘钥信息，就可以发现一些问题，以下为案例。<br> 某处代码泄露了秘钥导致接口权限被获取，拿到了短信接口的秘钥，如果没有API文档或者代码中没有明显的调用方式，就显得比较鸡肋。接下来我们需要想办法找到对应的API接口文档，一般来说，第三方的接口和接口地址都是统一域名下或者二三级域名下。<br><img src="https://i.loli.net/2019/12/12/4svhXnLrV2WuOAT.png" alt="图片.png"></p>
+<p>  通过阅读第三方的接口文档，可以很好的根据秘钥计算出需要拼接的参数，用bp发包几次，发现可以响应并且可以看到一些内容，比如短信余额等。开发者往往会利用返回包的字段去做进一步的业务场景判断，如发送是否成功。<br><img src="https://i.loli.net/2019/12/12/zEHgLRuXNfasJPq.png" alt="图片.png"></p>
+<p>POC</p>
+<p> <img src="https://i.loli.net/2019/12/12/uxqHPjvi1gTNbfW.png" alt="图片.png"></p>
+<h3 id="0x03-某公众号"><a href="#0x03-某公众号" class="headerlink" title="0x03 某公众号"></a>0x03 某公众号</h3><p>现实中大部分网站都需要与微信服务器发生交互，比如OAuth第三方登录，微信公众号宣传，微信小程序等，研究这些应用是如何和我们自己的网站或app交互，那么在安全测试过程中格外关注秘钥的安全和交互流程的安全。<br>如果代码中找打不到泄露该怎么搞呢，或者其他渠道也搞不到，这个时候，可以回归到网站或程序本身，去找需要和第三方程序交互的业务部分，通过抓包分析和参考接口调用过程，会有一个比较好的逻辑，当然有程序员会把秘钥在数据包中传输（反正我没遇到过），有的会硬编码到js或者app的代码中，如果代码做了混淆或者难以脱壳，我们是否可以换个角度去搞到秘钥呢？<br>下面一个案例比较有意思<br> 是否可以通过程序中使用框架报错或者异常机制获取到这些信息呢？<br>  POC：</p>
+<p><img src="https://i.loli.net/2019/12/12/D1n7IsPjxNphYeg.png" alt="图片.png"></p>
+<p> 可以发现可以获取到微信工装平台的用户信息，通过参考微信API文档还有更多的功能。<br> 这个漏洞有点奇葩，其实key是通过站点请求微信二维码的过程中，输入异常的字符串获取的，可以发送一些自己构造的异常数据包来看后台框架报错信息，进一步利用，异常的字符串或者数据可以夹杂些不同编码的字符串，或者加一些sql注入的语句，后端框架无法解析string或者触发拦截器或者输入后台接口所规定的字符串长度值会抛出异常作为响应。<br>以下是通过出发安全机制抛出程序上下文信息，其中就夹杂了我们需要的信息。</p>
+<p><img src="https://i.loli.net/2019/12/12/V45q7voDYIiJhEe.png" alt="图片.png"></p>
+<p>先说一下access_token，微信有俩种<a href="https://blog.csdn.net/benben_2015/article/details/79703508" target="_blank" rel="noopener">点这里</a><br>以公众号为例<br>微信官方这这样定义的：</p>
+<p><img src="https://i.loli.net/2019/12/12/i28bqSR4EfFWCKm.png" alt="image.png"><br>通过查看文档发现</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">appid=APPID&amp;secret=APPSECRET</span><br></pre></td></tr></table></figure></div>
 
-<p>定义一个普通类</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">@Description (</span><br><span class="line">        desc = &quot;a&quot;,</span><br><span class="line">        author = &quot;b&quot;,</span><br><span class="line">        age = 19</span><br><span class="line">)</span><br><span class="line">public class testnew &#123;</span><br><span class="line">  String desc;</span><br><span class="line">  String author;</span><br><span class="line">  int age;</span><br><span class="line"></span><br><span class="line">    public String getDesc() &#123;</span><br><span class="line">        return desc;</span><br><span class="line">    &#125;</span><br><span class="line">    @Description (</span><br><span class="line">            desc = &quot;a&quot;,</span><br><span class="line">            author = &quot;b&quot;,</span><br><span class="line">            age = 19</span><br><span class="line">    )</span><br><span class="line">    public void setDesc(String desc) &#123;</span><br><span class="line">        this.desc = desc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getAuthor() &#123;</span><br><span class="line">        return author;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAuthor(String author) &#123;</span><br><span class="line">        this.author = author;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getAge() &#123;</span><br><span class="line">        this.age=1;</span><br><span class="line">        return age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAge(int age) &#123;</span><br><span class="line"></span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+<p>需要以上字段才可以，但是又无法获取这俩字段，幸运的是通过错误信息可以直接拿到access_token，access_token在用户调用微信接口服务中起着重要作用，官方文档的描述是 “access_token是公众号的全局唯一接口调用凭据，公众号调用各接口时都需使用access_token。开发者需要进行妥善保存”<br>通过此字段，参考微信文档，可以直接get到微信公众号的很多部分API权限。<br>无需写代码，通过微信自定义的测试页面就可以展开很好的测试</p>
+<h3 id="0x04-Git泄露获取s3"><a href="#0x04-Git泄露获取s3" class="headerlink" title="0x04 Git泄露获取s3"></a><strong>0x04 Git泄露获取s3</strong></h3><p>在某次CTF中，发现了git泄露，但是怎么都找不到具体可以利用的信息（被自己菜哭了），获取到的配置如下<br><img src="https://i.loli.net/2019/12/12/lbuMANsdEo4mihI.png" alt="image.png"><br>看到S3便想到了aws，但是多次尝试S3的域名和id和key并未能授权登录<br>不存在未授权的漏洞<br><img src="https://i.loli.net/2019/12/12/Paw1EiTmu4BLZhM.png" alt="image.png"></p>
+<p>最后的思路居然通过git log,查看到历史的commit版本，然后chechout 历史的commit，就会看到完整的信息。<br><img src="https://i.loli.net/2019/12/12/cIeZtlGugxSjpWv.png" alt="image.png"><br>get s3<br><img src="https://i.loli.net/2019/12/12/GjlTOHxsu4LqUim.png" alt="image.png"><br>OSS和s3有类似之处<br><img src="https://i.loli.net/2019/12/12/odsnMWE2bSIpxav.png" alt="image.png"><br>AWS控制台的配置信息或者各种实例的的秘钥信息等都可以获取相关权限，当然如果没有配置安全组的情况下比较有效。</p>
+<h3 id="0x04-最后"><a href="#0x04-最后" class="headerlink" title="0x04 最后"></a><strong>0x04 最后</strong></h3><p>米斯特很nice</p>
 
-<p>main方法读取类的注解，一些知名的框架通过注解来实现配置简单化，这个时候往往用到了java反射机制来实现，这也就是为什么有些课程会讲到框架的底层靠反射实现</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import com.sun.tools.javac.comp.Annotate;</span><br><span class="line"></span><br><span class="line">import java.io.File;</span><br><span class="line">import java.lang.annotation.Annotation;</span><br><span class="line">import java.lang.reflect.Field;</span><br><span class="line">import java.lang.reflect.InvocationTargetException;</span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(&quot;Hello World!&quot;);</span><br><span class="line">        test1();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void test1()&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            //使用类加载器</span><br><span class="line">            Class clazz = Class.forName ( &quot;testnew&quot;);</span><br><span class="line">            //类是否有注解</span><br><span class="line">            boolean isClsExits =clazz.isAnnotationPresent ( Description.class );//</span><br><span class="line">            System.out.println (isClsExits);</span><br><span class="line"></span><br><span class="line">            if (isClsExits)&#123;</span><br><span class="line">                Description test=(Description)clazz.getAnnotation(Description.class);</span><br><span class="line">                System.out.println (test.author ());</span><br><span class="line">            &#125;</span><br><span class="line">            //获取类的注解</span><br><span class="line">            Annotation[] annotations=clazz.getAnnotations ();</span><br><span class="line"></span><br><span class="line">            for (Annotation a :annotations)&#123;</span><br><span class="line">                System.out.println (a);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            //获取 方法的注解</span><br><span class="line">            Method[] met =clazz.getMethods ();</span><br><span class="line">            for (Method method :met)&#123;</span><br><span class="line">                boolean ismetExits =method.isAnnotationPresent (Description.class );</span><br><span class="line">                if (ismetExits)&#123;</span><br><span class="line">                Description des =(Description)method.getAnnotation (Description.class);</span><br><span class="line">                //获取方法的注解的某个属性</span><br><span class="line">                    System.out.println (des.age ());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            System.out.println (clazz.getName ());//获取包名和类名</span><br><span class="line">            System.out.println (clazz.getSimpleName ());//获取类名</span><br><span class="line">            //调用类的方式1</span><br><span class="line">//            Object object = clazz.newInstance();</span><br><span class="line">            Method method = clazz.getMethod(&quot;getAge&quot;);//获取类的某个方法</span><br><span class="line">//            System.out.println(method.invoke(object));</span><br><span class="line">            //调用类的方式2</span><br><span class="line">            Object obj = method.invoke(clazz.newInstance());</span><br><span class="line"></span><br><span class="line">            System.out.println(obj);</span><br><span class="line">            //获取类的所有方法</span><br><span class="line">//            Method[] methods1 = clazz.getMethods();</span><br><span class="line">//            for (Method method2 : methods1) &#123;</span><br><span class="line">//                //获取类中方法的全名(eg:public com.test.Main())</span><br><span class="line">//                System.out.println(method2);</span><br><span class="line">//            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (NoSuchMethodException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (IllegalAccessException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (InstantiationException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (InvocationTargetException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>main方法运行结果：</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Hello World!</span><br><span class="line">true</span><br><span class="line">b</span><br><span class="line">@Description(age=19, desc=a, author=b)</span><br><span class="line">19</span><br><span class="line">testnew</span><br><span class="line">testnew</span><br><span class="line">1</span><br></pre></td></tr></table></figure></div>
       
     </div>
     
@@ -115,7 +123,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/11/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/11/">Next &raquo;</a>
   </nav>
 
 
@@ -162,6 +170,10 @@
       <ul>
         
           <li>
+            <a href="/2020/03/04/菜鸡版java反序列化漏洞学习/">菜鸡版java反序列化漏洞学习</a>
+          </li>
+        
+          <li>
             <a href="/2020/03/02/http协议走私实验/">http协议走私实验</a>
           </li>
         
@@ -175,10 +187,6 @@
         
           <li>
             <a href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/29/hadoop-伪分布式/">hadoop 伪分布式</a>
           </li>
         
       </ul>

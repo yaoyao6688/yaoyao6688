@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-SQL-injection-in-Gila-CMS-version-1-11-4" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Java注解" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/10/13/SQL-injection-in-Gila-CMS-version-1-11-4/">SQL injection in Gila CMS version 1.11.4</a>
+      <a class="article-title" href="/2019/10/20/Java注解/">Java注解</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2019/10/13/SQL-injection-in-Gila-CMS-version-1-11-4/" class="article-date">
-  <time datetime="2019-10-13T10:03:05.000Z" itemprop="datePublished">2019-10-13</time>
+    <a href="/2019/10/20/Java注解/" class="article-date">
+  <time datetime="2019-10-20T05:53:44.000Z" itemprop="datePublished">2019-10-20</time>
 </a>
     
     
@@ -88,17 +88,20 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p><strong>0x01</strong><br>I installed the latest version of GilaCMS (v1.11.4). After the administrator log in to the website, the search for the sql injection vulnerability exists in the content-&gt;pages-&gt;posts page.</p>
-<p>The vulnerability related code is in lines 101 to 127 of /src/core/controllers/cm.php, the parameter $_GET is not filtered, and the line is directly brought into the getRows function to perform data query in line 122, resulting in sql injection.</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">function list_rowsAction ()</span><br><span class="line">&#123;</span><br><span class="line">  header(&apos;Content-Type: application/json&apos;);</span><br><span class="line">  $table = router::get(&quot;t&quot;,1);</span><br><span class="line">  $result = self::list_rows($table, $_GET, $_GET);</span><br><span class="line">  echo json_encode($result, JSON_PRETTY_PRINT);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function list_rows ($table, $filters, $args)</span><br><span class="line">&#123;</span><br><span class="line">  if(isset($args[&apos;groupby&apos;])&amp;&amp;$args[&apos;groupby&apos;]!=null) &#123;</span><br><span class="line">    $this-&gt;group_rowsAction();</span><br><span class="line">    return;</span><br><span class="line">  &#125;</span><br><span class="line">  $pnk = new gTable($table, $this-&gt;permissions);</span><br><span class="line">  if(!$pnk-&gt;can(&apos;read&apos;)) return;</span><br><span class="line">  $result = [];</span><br><span class="line"></span><br><span class="line">  $fieldlist = isset($args[&apos;id&apos;]) ? &apos;edit&apos; : &apos;list&apos;;</span><br><span class="line">  $result[&apos;fields&apos;] = $pnk-&gt;fields($fieldlist);</span><br><span class="line">  $result[&apos;rows&apos;] = [];</span><br><span class="line">  $res = $pnk-&gt;getRows($filters, array_merge($args, [&apos;select&apos;=&gt;$result[&apos;fields&apos;]]));</span><br><span class="line">  foreach($res as $r) $result[&apos;rows&apos;][] = array_values($r);</span><br><span class="line">  $result[&apos;startIndex&apos;] = $pnk-&gt;startIndex($args);</span><br><span class="line">  $result[&apos;totalRows&apos;] = $pnk-&gt;totalRows($filters);</span><br><span class="line">  return $result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+        <p>温故而知新，总结一下<br><strong>0x01 注解基础知识</strong><br>注解和jdk版本关系：从JDK5开始<br>什么是注解：代码的标签，是源代码的元数据。<br>注解的作用：读懂别人的代码，简化代码的配置<br>注解的本质：1，附属于代码，依赖于方法，类，属性存在<br>         2，本身没有任何作用，在恰当的时候有外部程序解析产生<br>注解的分类：1，JDk内置注解（@Override、@Derprecated、@SupperWarnings）<br>         2，第三方框架的注解：<br>          Spring：@Autowired @Controller @Service @Respository<br>          Mybatis:@InsertProvider @Update @Options<br>         3,按照生命周期进行分类：<br>          （1），SOURCE源码注解<br>          （2），CLASS编译时注解：存在于源码及class文件中<br>          （3）, RUNTIME运行时注解：注解保留到运行时，甚至还会影响运行逻辑，@autowired属于运行时注解</p>
+<p>元注解：注解的注解<br>   @Retention 定义生命周期，可选值：SOURCE,CLASS，RUNTIME<br>   @Documented 文档化注解<br>   @Inherited 注解是自动继承的<br>   @Target 注解的使用范围</p>
+<p>   自定义注解无法规则：成员以无参方式声明；可以使用deafault关键字指定默认值，成员类型是受限制的，合法的类型包括<br>   注解类可以没有成员，没有成员的注解称为标识注解</p>
+<p><strong>0x02举个例子</strong><br>   编辑器环境：IDEA<br>   定义一个注解类：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import javax.management.relation.RelationType;</span><br><span class="line">import java.lang.annotation.*;</span><br><span class="line"></span><br><span class="line">@Target (&#123;ElementType.METHOD,ElementType.TYPE&#125;)</span><br><span class="line">@Retention (RetentionPolicy.RUNTIME)//注解可以保留到程序运行的时候</span><br><span class="line">@Inherited</span><br><span class="line">@Documented</span><br><span class="line">public @interface Description &#123;//注解的属性</span><br><span class="line">    String desc();//描述内容</span><br><span class="line">    String author();//描述作者</span><br><span class="line">    int age() default 18;//描述年龄</span><br><span class="line">    /*</span><br><span class="line">     */</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p><strong>0x02 Vulnerability certificate</strong><br>Vulnerability url:http://[address]:[port]/[app_path]/cm/list_rows/post?page=1&amp;search=qww’)+UNION+ALL+SELECT+NULL,NULL,NULL,NULL,NULL,NULL,CONCAT(CONCAT(‘123’,’456’),’789’)–+THB<br>Send a get query request after entering characters in the search box</p>
-<p><img src="https://i.loli.net/2019/10/13/a3MgxbKeEjJIyO7.png" alt="F070CE3A-AF46-4258-888E-887DDEDBD717.png"></p>
-<p>Then insert the SQL statement in the search parameter.Returns the field with 123456789 in the package, so you can execute sql. SQL injection exists</p>
-<p><img src="https://i.loli.net/2019/10/13/VQEfxZP6OUv3m74.png" alt="A056417D-551C-4A59-9030-1EC061CE3475.png"></p>
-<p><img src="https://i.loli.net/2019/10/13/j5vH74Zu6nB3sz8.png" alt="图片.png"><br>Sqlmap can also verify this vulnerability</p>
-<p><img src="https://i.loli.net/2019/10/13/GNsEiIHy8vALBFM.png" alt="61FA3993-DD09-4AC4-BB88-140C0F02A642.png"></p>
+<p>定义一个普通类</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">@Description (</span><br><span class="line">        desc = &quot;a&quot;,</span><br><span class="line">        author = &quot;b&quot;,</span><br><span class="line">        age = 19</span><br><span class="line">)</span><br><span class="line">public class testnew &#123;</span><br><span class="line">  String desc;</span><br><span class="line">  String author;</span><br><span class="line">  int age;</span><br><span class="line"></span><br><span class="line">    public String getDesc() &#123;</span><br><span class="line">        return desc;</span><br><span class="line">    &#125;</span><br><span class="line">    @Description (</span><br><span class="line">            desc = &quot;a&quot;,</span><br><span class="line">            author = &quot;b&quot;,</span><br><span class="line">            age = 19</span><br><span class="line">    )</span><br><span class="line">    public void setDesc(String desc) &#123;</span><br><span class="line">        this.desc = desc;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getAuthor() &#123;</span><br><span class="line">        return author;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAuthor(String author) &#123;</span><br><span class="line">        this.author = author;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int getAge() &#123;</span><br><span class="line">        this.age=1;</span><br><span class="line">        return age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAge(int age) &#123;</span><br><span class="line"></span><br><span class="line">        this.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
+<p>main方法读取类的注解，一些知名的框架通过注解来实现配置简单化，这个时候往往用到了java反射机制来实现，这也就是为什么有些课程会讲到框架的底层靠反射实现</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import com.sun.tools.javac.comp.Annotate;</span><br><span class="line"></span><br><span class="line">import java.io.File;</span><br><span class="line">import java.lang.annotation.Annotation;</span><br><span class="line">import java.lang.reflect.Field;</span><br><span class="line">import java.lang.reflect.InvocationTargetException;</span><br><span class="line">import java.lang.reflect.Method;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class Main &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(&quot;Hello World!&quot;);</span><br><span class="line">        test1();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void test1()&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            //使用类加载器</span><br><span class="line">            Class clazz = Class.forName ( &quot;testnew&quot;);</span><br><span class="line">            //类是否有注解</span><br><span class="line">            boolean isClsExits =clazz.isAnnotationPresent ( Description.class );//</span><br><span class="line">            System.out.println (isClsExits);</span><br><span class="line"></span><br><span class="line">            if (isClsExits)&#123;</span><br><span class="line">                Description test=(Description)clazz.getAnnotation(Description.class);</span><br><span class="line">                System.out.println (test.author ());</span><br><span class="line">            &#125;</span><br><span class="line">            //获取类的注解</span><br><span class="line">            Annotation[] annotations=clazz.getAnnotations ();</span><br><span class="line"></span><br><span class="line">            for (Annotation a :annotations)&#123;</span><br><span class="line">                System.out.println (a);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            //获取 方法的注解</span><br><span class="line">            Method[] met =clazz.getMethods ();</span><br><span class="line">            for (Method method :met)&#123;</span><br><span class="line">                boolean ismetExits =method.isAnnotationPresent (Description.class );</span><br><span class="line">                if (ismetExits)&#123;</span><br><span class="line">                Description des =(Description)method.getAnnotation (Description.class);</span><br><span class="line">                //获取方法的注解的某个属性</span><br><span class="line">                    System.out.println (des.age ());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">            System.out.println (clazz.getName ());//获取包名和类名</span><br><span class="line">            System.out.println (clazz.getSimpleName ());//获取类名</span><br><span class="line">            //调用类的方式1</span><br><span class="line">//            Object object = clazz.newInstance();</span><br><span class="line">            Method method = clazz.getMethod(&quot;getAge&quot;);//获取类的某个方法</span><br><span class="line">//            System.out.println(method.invoke(object));</span><br><span class="line">            //调用类的方式2</span><br><span class="line">            Object obj = method.invoke(clazz.newInstance());</span><br><span class="line"></span><br><span class="line">            System.out.println(obj);</span><br><span class="line">            //获取类的所有方法</span><br><span class="line">//            Method[] methods1 = clazz.getMethods();</span><br><span class="line">//            for (Method method2 : methods1) &#123;</span><br><span class="line">//                //获取类中方法的全名(eg:public com.test.Main())</span><br><span class="line">//                System.out.println(method2);</span><br><span class="line">//            &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (NoSuchMethodException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (IllegalAccessException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (InstantiationException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (InvocationTargetException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>main方法运行结果：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Hello World!</span><br><span class="line">true</span><br><span class="line">b</span><br><span class="line">@Description(age=19, desc=a, author=b)</span><br><span class="line">19</span><br><span class="line">testnew</span><br><span class="line">testnew</span><br><span class="line">1</span><br></pre></td></tr></table></figure></div>
       
     </div>
     
@@ -112,7 +115,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/10/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/12/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/10/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="page-number" href="/page/10/">10</a><span class="page-number current">11</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/12/">Next &raquo;</a>
   </nav>
 
 
@@ -159,6 +162,10 @@
       <ul>
         
           <li>
+            <a href="/2020/03/04/菜鸡版java反序列化漏洞学习/">菜鸡版java反序列化漏洞学习</a>
+          </li>
+        
+          <li>
             <a href="/2020/03/02/http协议走私实验/">http协议走私实验</a>
           </li>
         
@@ -172,10 +179,6 @@
         
           <li>
             <a href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/29/hadoop-伪分布式/">hadoop 伪分布式</a>
           </li>
         
       </ul>

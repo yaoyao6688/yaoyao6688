@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-Reflective-xss-on-admin-snippets-php" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-正则表达式总结和引起的思考" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/09/05/Reflective-xss-on-admin-snippets-php/">Reflective xss on admin/snippets.php</a>
+      <a class="article-title" href="/2019/09/22/正则表达式总结和引起的思考/">正则表达式总结和引起的思考</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2019/09/05/Reflective-xss-on-admin-snippets-php/" class="article-date">
-  <time datetime="2019-09-05T02:45:43.000Z" itemprop="datePublished">2019-09-05</time>
+    <a href="/2019/09/22/正则表达式总结和引起的思考/" class="article-date">
+  <time datetime="2019-09-21T17:26:46.000Z" itemprop="datePublished">2019-09-22</time>
 </a>
     
     
@@ -88,10 +88,40 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p>I installed GetSimpleCMS and found that xss exists in admin/snippets.php, and script and html are not filtered in the title of the editing Snippet.</p>
-<p>Enter Payload</p>
-<p><img src="https://i.loli.net/2019/09/05/ElOMruTzGVWH4S8.png" alt="xss1.png"></p>
-<p>Code<br><img src="https://i.loli.net/2019/09/05/QvVaIFtOdcSGz3h.png" alt="xss.png"></p>
+        <p><strong>基础知识</strong><br><strong>前言：</strong>最近公司在搞POC和EXP，在看代码的时候发现有的部分已经生疏了，所以又回头总结一下，包括php和Python的具体函数和使用以及漏洞案例</p>
+<h4 id="0x01-基础部分"><a href="#0x01-基础部分" class="headerlink" title="0x01 基础部分"></a>0x01 基础部分</h4><p>字符：<br>. 匹配任意字符除了\n<br>[…] 匹配字符集<br>\d \D匹配数字/非数字<br>\s \S 匹配空白/非空白字符<br>\w \W 匹配单词字符[a-zA-Z0-9]/非单词字符<br>量词：</p>
+<ul>
+<li>匹配前一个字符0次或者无限次</li>
+</ul>
+<ul>
+<li>匹配前一个字符1次或者无限次<br>？匹配其哪一个字符0次或者1次<br>{m}/{m,n}匹配其哪一个字符m次或者n次</li>
+</ul>
+<p>*？/+? /?? 匹配模式变为非贪婪，尽可能少匹配字符<br>^匹配字符串开头<br>$匹配字符串结尾<br>\A/\Z指定的字符串匹配必须出现在开头/结尾</p>
+<h4 id="0x02-Python"><a href="#0x02-Python" class="headerlink" title="0x02 Python"></a>0x02 Python</h4><p>re.findall(“”,) 使用<br>re.findall(“”,)匹配所有<br>re.search(“”,)匹配一次</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">In [1]: import re                                                               </span><br><span class="line"></span><br><span class="line">In [2]: a= &apos;C|Java|Pythonn|Javascript&apos;                                          </span><br><span class="line"></span><br><span class="line">In [3]: r =  re.findall(&quot;Python&quot;,a)</span><br><span class="line">In [5]: r                                                                       </span><br><span class="line">Out[5]: [&apos;Python&apos;]</span><br><span class="line"></span><br><span class="line">#匹配数字</span><br><span class="line">In [6]: a = &apos;C54Java433#4564 Python|Java&apos;                                       </span><br><span class="line"></span><br><span class="line">In [7]: r = re.findall(&quot;\d&quot;,a)                                                  </span><br><span class="line"></span><br><span class="line">In [8]: r                                                                       </span><br><span class="line">Out[8]: [&apos;5&apos;, &apos;4&apos;, &apos;4&apos;, &apos;3&apos;, &apos;3&apos;, &apos;4&apos;, &apos;5&apos;, &apos;6&apos;, &apos;4&apos;]</span><br><span class="line">In [31]: r = re.findall(&quot;\d+&quot;,a) </span><br><span class="line">In [32]: r                                                                      </span><br><span class="line">Out[32]: [&apos;54&apos;, &apos;433&apos;, &apos;4564&apos;]</span><br><span class="line">#匹配非单词字符</span><br><span class="line">In [21]: r = re.findall(&quot;\W&quot;,a)                                                 </span><br><span class="line"></span><br><span class="line">In [22]: r                                                                      </span><br><span class="line">Out[22]: [&apos;#&apos;, &apos; &apos;, &apos;|&apos;]</span><br></pre></td></tr></table></figure></div>
+
+<p>用正则表达式匹配url<br>图片处’img src=”(.*?)”‘</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">In [9]: url = &quot;http://www.xiaohuar.com/2014.html&quot;                               </span><br><span class="line"></span><br><span class="line">In [10]: res=req.get(url)                                                       </span><br><span class="line"></span><br><span class="line">In [11]: url = re.findall(&apos;img src=&quot;(.*?)&quot;&apos;,res.text)                           </span><br><span class="line"></span><br><span class="line">In [12]: url                                                                    </span><br><span class="line">Out[12]: </span><br><span class="line">[&apos;/d/file/20160316/a0bab5b5cc4f695012f4af1d871e7256.jpg&apos;,</span><br><span class="line"> &apos;http://www.xiaohuar.com/d/file/20140811101923185.jpg&apos;]</span><br><span class="line"> ……</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line"> In [13]: for i in url: </span><br><span class="line">    ...:     if i.startswith(&apos;/d&apos;): </span><br><span class="line">    ...:         i=&quot;http://www.xiaohuar.com&quot;+i </span><br><span class="line">    ...:     print(i) </span><br><span class="line">    ...:                                                                        </span><br><span class="line">http://www.xiaohuar.com/d/file/20160316/a0bab5b5cc4f695012f4af1d871e7256.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/20140811101923185.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/2b903e6d59bd1435a0b9ddfb5b4bd9c5.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/20190814/5c01302d1d3e7f2fc6cbafbc19becaa8.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/20161018/5385b7113046ac9ae560da41a44b12af.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/2ce538e9658af40bc034f5dfaf57826a.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/20141116030511162.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/faf429bf24391374472fec693322b178.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/20151206/f391a2312f448863f36db7d0d9acb84d.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/7249c06c326a75800fdb9a0e1d4c0df8.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/20140916055435171.jpg</span><br><span class="line">http://www.xiaohuar.com/d/file/20151109/a6a9f1cd6c721bb3fb1dfe6094a6eeb4.jpg</span><br></pre></td></tr></table></figure></div>
+
+<p>当然可以使用解析库去解析如bs4</p>
+<h4 id="0x03-php"><a href="#0x03-php" class="headerlink" title="0x03 php"></a>0x03 php</h4><p>引用W3schoool</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">echo str_replace(&quot;world&quot;,&quot;Shanghai&quot;,&quot;Hello world!&quot;);</span><br><span class="line">?&gt;</span><br><span class="line">  </span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line">运行结果</span><br><span class="line">Hello Shanghai!</span><br></pre></td></tr></table></figure></div>
+
+<p>preg_match() 函数用于进行正则表达式匹配，成功返回 1 ，否则返回 0 。</p>
+<p>语法：<br>int preg_match( string pattern, string subject [, array matches ] )<br>看seebug上大佬的某处代码审计案例解析</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">public function upload() &#123;</span><br><span class="line"></span><br><span class="line">     // 创建图片存储文件夹</span><br><span class="line">     $dir = SYS_UPLOAD_PATH.&apos;/member/&apos;.$this-&gt;uid.&apos;/&apos;;</span><br><span class="line">     @dr_dir_delete($dir);</span><br><span class="line">     !is_dir($dir) &amp;&amp; dr_mkdirs($dir);</span><br><span class="line"></span><br><span class="line">     if ($_POST[&apos;tx&apos;]) &#123;</span><br><span class="line">         $file = str_replace(&apos; &apos;, &apos;+&apos;, $_POST[&apos;tx&apos;]);</span><br><span class="line">         if (preg_match(&apos;/^(data:\s*image\/(\w+);base64,)/&apos;, $file, $result))&#123;</span><br><span class="line">             $new_file = $dir.&apos;0x0.&apos;.$result[2];</span><br><span class="line">             if (!@file_put_contents($new_file, base64_decode(str_replace($result[1], &apos;&apos;, $file)))) &#123;</span><br><span class="line">                 exit(dr_json(0, &apos;目录权限不足或磁盘已满&apos;));</span><br><span class="line">             &#125; else &#123;</span><br><span class="line">                 $this-&gt;load-&gt;library(&apos;image_lib&apos;);</span><br><span class="line">                 $config[&apos;create_thumb&apos;] = TRUE;</span><br><span class="line">                 $config[&apos;thumb_marker&apos;] = &apos;&apos;;</span><br><span class="line">                 $config[&apos;maintain_ratio&apos;] = FALSE;</span><br><span class="line">                 $config[&apos;source_image&apos;] = $new_file;</span><br><span class="line">                 foreach (array(30, 45, 90, 180) as $a) &#123;</span><br><span class="line">                     $config[&apos;width&apos;] = $config[&apos;height&apos;] = $a;</span><br><span class="line">                     $config[&apos;new_image&apos;] = $dir.$a.&apos;x&apos;.$a.&apos;.&apos;.$result[2];</span><br><span class="line">                     $this-&gt;image_lib-&gt;initialize($config);</span><br><span class="line">                     if (!$this-&gt;image_lib-&gt;resize()) &#123;</span><br><span class="line">                         exit(dr_json(0, &apos;上传错误：&apos;.$this-&gt;image_lib-&gt;display_errors()));</span><br><span class="line">                         break;</span><br><span class="line">                     &#125;</span><br><span class="line">                 &#125;</span><br><span class="line">                 list($width, $height, $type, $attr) = getimagesize($dir.&apos;45x45.&apos;.$result[2]);</span><br><span class="line">                 !$type &amp;&amp; exit(dr_json(0, &apos;图片字符串不规范&apos;));</span><br><span class="line">             &#125;</span><br><span class="line">         &#125; else &#123;</span><br><span class="line"></span><br><span class="line">             exit(dr_json(0, &apos;图片字符串不规范&apos;));</span><br><span class="line">         &#125;</span><br><span class="line">     &#125; else &#123;</span><br><span class="line">         exit(dr_json(0, &apos;图片不存在&apos;));</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure></div>
+
+<p>问题出现preg_match(‘/^(data:\s*image/(\w+);base64,)/‘, $file, $result)处，正则表达式过滤不严格，导致 $result[2]变量可控制为php，而图片内容也可以是可控制的base64编码的部分，所以可以getshell<br>通过简单测试：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$file = &quot;data:image/php;base64,PD9waHAgcGhwaW5mbygpOz8+&quot;;</span><br><span class="line">if(preg_match(&apos;/^(data:\s*image\/(\w+);base64,)/&apos;, $file, $result))&#123;</span><br><span class="line">    print_r($result); </span><br><span class="line">&#125; else &#123;</span><br><span class="line">    print &quot;A match was not found.&quot;;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br><span class="line">php test.php 运行结果 </span><br><span class="line">Array</span><br><span class="line">(</span><br><span class="line">    [0] =&gt; data:image/php;base64,</span><br><span class="line">    [1] =&gt; data:image/php;base64,</span><br><span class="line">    [2] =&gt; php</span><br><span class="line">)</span><br></pre></td></tr></table></figure></div>
+
+<p>在php当中，’()’表示匹配的子模式，在代码中的正则用了俩次括号，所以得到数组有十三个<br>此处正确的正则表达式和代码应该为</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$file = &quot;data:image/jpg;base64,PD9waHAgcGhwaW5mbygpOz8+&quot;;</span><br><span class="line">if(preg_match(&apos;/^(data:\s*image\/(jpg|png|jpeg);base64,)/&apos;, $file, $result))&#123;</span><br><span class="line">    print_r($result); </span><br><span class="line">&#125; else &#123;</span><br><span class="line">    print &quot;A match was not found.&quot;;</span><br><span class="line">&#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure></div>
+
+<p>运行结果：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">Array</span><br><span class="line">(</span><br><span class="line">    [0] =&gt; data:image/jpg;base64,</span><br><span class="line">    [1] =&gt; data:image/jpg;base64,</span><br><span class="line">    [2] =&gt; jpg</span><br><span class="line">)</span><br></pre></td></tr></table></figure></div>
+
+<p>关于php的正则细节可以参考<a href="https://blog.csdn.net/uglyfisher/article/details/79333586" target="_blank" rel="noopener">[https://blog.csdn.net/uglyfisher/article/details/79333586]</a><br>研究正则表达式，可以严谨代码书写规范，挖掘漏洞</p>
+<h4 id="0x03-正则表达式引起的CPU过载"><a href="#0x03-正则表达式引起的CPU过载" class="headerlink" title="0x03 正则表达式引起的CPU过载"></a>0x03 正则表达式引起的CPU过载</h4><p>引用一处正则表达式回溯的案例<br><a href="https://www.jb51.net/article/163520.htm" target="_blank" rel="noopener">https://www.jb51.net/article/163520.htm</a></p>
 
       
     </div>
@@ -106,7 +136,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/13/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/15/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/13/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/15/">Next &raquo;</a>
   </nav>
 
 
@@ -153,6 +183,10 @@
       <ul>
         
           <li>
+            <a href="/2020/03/04/菜鸡版java反序列化漏洞学习/">菜鸡版java反序列化漏洞学习</a>
+          </li>
+        
+          <li>
             <a href="/2020/03/02/http协议走私实验/">http协议走私实验</a>
           </li>
         
@@ -166,10 +200,6 @@
         
           <li>
             <a href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
-          </li>
-        
-          <li>
-            <a href="/2020/01/29/hadoop-伪分布式/">hadoop 伪分布式</a>
           </li>
         
       </ul>

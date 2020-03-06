@@ -19,7 +19,7 @@
 <meta property="og:locale" content="en">
 <meta property="og:image" content="https://i.loli.net/2020/03/04/4rAuUHzcYx8qg2K.png">
 <meta property="og:image" content="https://i.loli.net/2020/03/04/Xk4drOI32ema9VL.png">
-<meta property="og:updated_time" content="2020-03-04T15:27:41.357Z">
+<meta property="og:updated_time" content="2020-03-05T08:43:20.754Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="菜鸡版java反序列化漏洞学习">
 <meta name="twitter:description" content="0x01 Demo先创建一个class，然后序列化实例的对象 import java.io.Serializable;import java.io.StringReader;public class User implements Serializable &amp;#123;    private static final long seriaVersionUID =1l;    private Str">
@@ -118,7 +118,7 @@
 
 }</code></pre><p> 至于这里readObject属性为什么是私有属性，我……，这不是我这种小白能理解的，我对**一无所知<br>总之，反序列化的时候会先执行readObject这个方法<br><img src="https://i.loli.net/2020/03/04/4rAuUHzcYx8qg2K.png" alt="图片.png"></p>
 <h3 id="0x03-反序列化漏洞检测与防护"><a href="#0x03-反序列化漏洞检测与防护" class="headerlink" title="0x03 反序列化漏洞检测与防护"></a>0x03 反序列化漏洞检测与防护</h3><p>1 resolveClass方法可以绕过，用黑名单的方式防护<br>2 代码中含有类似于readObject的方法可控，类似的方法还有readObjectNoData,readObjectResolve,readExternal等等<br>检测方法：<br>在代码中搜索这些内容，最常见的有fastjson，Jackson等，还有存在漏洞CommonsCollections的版本，不过这三者的触发原理不太一样，fastjson，Jackson的利用链多是利用可控的JNDI和RMI进行注入恶意代码，然后反序列化此类，我只看了CommonsCollections的原理，其他两个没有自己跟踪过代码进行学习。</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">ObjectInputStream.readObject</span><br><span class="line">ObjectInputStream.readUnshared</span><br><span class="line">XMLDecoder.readObject</span><br><span class="line">Yaml.load</span><br><span class="line">XStream.fromXML</span><br><span class="line">ObjectMapper.readValue</span><br><span class="line">JSON.parseObject</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">ObjectInputStream.readObject</span><br><span class="line">ObjectInputStream.readUnshared</span><br><span class="line">XMLDecoder.readObject</span><br><span class="line">Yaml.load</span><br><span class="line">XStream.fromXML</span><br><span class="line">mapper.readValue</span><br><span class="line">ObjectMapper.readValue</span><br><span class="line">enableDefaultTyping()</span><br><span class="line">@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)</span><br><span class="line">@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS)</span><br><span class="line">JSON.parseObject(修复方法：删除ParserConfig.getGlobalInstance().setAutoTypeSupport(true);)</span><br></pre></td></tr></table></figure></div>
 
 <p>防护方法<br>1 SecurityManager  禁止Runtime.exec<br>2 重载ObjectInputStream的resolveClass()方法<br>3 利用第三方库的反序列化检测功能</p>
 <h3 id="0x04-CommonsCollections—POC分析"><a href="#0x04-CommonsCollections—POC分析" class="headerlink" title="0x04 CommonsCollections—POC分析"></a>0x04 CommonsCollections—POC分析</h3><p>POC比较多，有很多种，目前只看了AnnotationInvocationHandler这种的</p>

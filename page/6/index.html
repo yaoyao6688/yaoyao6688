@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-NDK-Build-方式实现JIN" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Android布局及控件" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
+      <a class="article-title" href="/2020/02/11/Android布局及控件/">Android布局及控件</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2020/02/08/NDK-Build-方式实现JIN/" class="article-date">
-  <time datetime="2020-02-08T11:55:59.000Z" itemprop="datePublished">2020-02-08</time>
+    <a href="/2020/02/11/Android布局及控件/" class="article-date">
+  <time datetime="2020-02-11T07:48:06.000Z" itemprop="datePublished">2020-02-11</time>
 </a>
     
     
@@ -88,28 +88,17 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <p>cmake方式创建也比较稳妥，但是想学学传统NDK-Build方式，谷歌比较推荐cmake编译的方式，cmake方式较为简洁。<br><strong>1 修改app目录下的build.gradle文件</strong><br>关键配置，选择构建项目的编译方式</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">    externalNativeBuild &#123;</span><br><span class="line">//        cmake &#123;</span><br><span class="line">//            path &quot;CMakeLists.txt&quot;</span><br><span class="line">//        &#125;</span><br><span class="line">        ndkBuild &#123;</span><br><span class="line">            path &apos;src/main/jni/Android.mk&apos;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
+        <p>了解常规的布局和acticity的初始化<br>1 布局文件 acticity_main.xml<br>线性文本框布局 </p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;android.support.constraint.ConstraintLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;</span><br><span class="line">    xmlns:tools=&quot;http://schemas.android.com/tools&quot;</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;</span><br><span class="line">    tools:context=&quot;.MainActivity&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;LinearLayout</span><br><span class="line">        xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">        android:layout_width=&quot;fill_parent&quot;</span><br><span class="line">        android:layout_height=&quot;fill_parent&quot;</span><br><span class="line">        android:orientation=&quot;vertical&quot;</span><br><span class="line">        &gt;</span><br><span class="line"></span><br><span class="line">        &lt;TextView</span><br><span class="line">            android:id=&quot;@+id/fist&quot;</span><br><span class="line">            android:layout_width=&quot;fill_parent&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">            android:layout_weight=&quot;1&quot;</span><br><span class="line">            android:background=&quot;#aa0000&quot;</span><br><span class="line">            android:gravity=&quot;center_vertical&quot;</span><br><span class="line">            android:text=&quot;第一行&quot;</span><br><span class="line">             /&gt;</span><br><span class="line"></span><br><span class="line">        &lt;TextView</span><br><span class="line">            android:layout_width=&quot;fill_parent&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">            android:layout_weight=&quot;1&quot;</span><br><span class="line">            android:background=&quot;#aa0000&quot;</span><br><span class="line">            android:gravity=&quot;center_vertical&quot;</span><br><span class="line">            android:text=&quot;第二行&quot;</span><br><span class="line">            /&gt;</span><br><span class="line"></span><br><span class="line">        &lt;TextView</span><br><span class="line">            android:layout_width=&quot;fill_parent&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">            android:layout_weight=&quot;1&quot;</span><br><span class="line">            android:background=&quot;#aa0000&quot;</span><br><span class="line">            android:gravity=&quot;center_vertical&quot;</span><br><span class="line">            android:text=&quot;第三行&quot;</span><br><span class="line">             /&gt;</span><br><span class="line"></span><br><span class="line">        &lt;TextView</span><br><span class="line">            android:layout_width=&quot;fill_parent&quot;</span><br><span class="line">            android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">            android:layout_weight=&quot;1&quot;</span><br><span class="line">            android:background=&quot;#aa0000&quot;</span><br><span class="line">            android:gravity=&quot;center_vertical&quot;</span><br><span class="line">            android:text=&quot;第四行&quot;</span><br><span class="line">             /&gt;</span><br><span class="line">    &lt;/LinearLayout&gt;</span><br><span class="line">&lt;/android.support.constraint.ConstraintLayout&gt;</span><br></pre></td></tr></table></figure></div>
 
-<p>配置文件：Android.mk</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># 当前模块路径，即Android.mk所在的文件目录</span><br><span class="line">LOCAL_PATH       :=  $(call my-dir)</span><br><span class="line"></span><br><span class="line"># 开始清除LOCAL_XXX变量</span><br><span class="line">include              $(CLEAR_VARS)</span><br><span class="line"></span><br><span class="line"># 动态库模块名称，Java代码中中加载动态库中使用System.loadLibrary(&quot;helloworld_jni&quot;);</span><br><span class="line">LOCAL_MODULE     :=  helloworld_jni</span><br><span class="line"></span><br><span class="line"># 编译的C/C++源文件，可多个，以空格隔开</span><br><span class="line">LOCAL_SRC_FILES  :=  helloworld.cpp</span><br><span class="line"></span><br><span class="line"># 开始动态编译生成动态库</span><br><span class="line">include $(BUILD_SHARED_LIBRARY)</span><br></pre></td></tr></table></figure></div>
+<p>orientation=”vertical”表示线性布局是以垂直方式排版<br>fill_parent表示视图在屏幕上可以使用的宽度，填充整个屏幕<br>wrap_content表示随着控件的大小改变而改变<br>layout_weight=”1”表示文本框等长<br>gravity=”center_vertical”表示居中</p>
+<p>2 按钮button.xml<br>创建字符string.xml</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;resources&gt;</span><br><span class="line">    &lt;string name=&quot;app_name&quot;&gt;HelloApp&lt;/string&gt;</span><br><span class="line">    &lt;string name=&quot;btnText&quot;&gt;确认&lt;/string&gt;</span><br><span class="line">&lt;/resources&gt;</span><br></pre></td></tr></table></figure></div>
 
-<p>Application.mk</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># 需要编译的ABI</span><br><span class="line">APP_ABI :=armeabi-v7a x86 x86_64</span><br></pre></td></tr></table></figure></div>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;</span><br><span class="line">    android:layout_width=&quot;match_parent&quot;</span><br><span class="line">    android:layout_height=&quot;match_parent&quot;&gt;</span><br><span class="line">&lt;Button</span><br><span class="line">    android:layout_width=&quot;fill_parent&quot;</span><br><span class="line">    android:layout_height=&quot;wrap_content&quot;</span><br><span class="line">    android:text=&quot;@string/btnText&quot;</span><br><span class="line">    android:id=&quot;@+id/btnOK&quot;</span><br><span class="line">    /&gt;</span><br><span class="line">&lt;/LinearLayout&gt;</span><br></pre></td></tr></table></figure></div>
 
-<p><strong>2 在src/main下创建HelloWorldJNI.class<br>在MainActivity会调用这个class</strong></p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">package ndk.runtest.ndk_test2;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class HelloWorldJNI &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    // 加载Native动态库（so库），动态库的名称后面在mk文件中会使用到</span><br><span class="line">    static &#123;</span><br><span class="line">        System.loadLibrary(&quot;helloworld_jni&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    // 定义Native方法</span><br><span class="line">    public native String getString();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public native String setString(String text);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
-
-<p><strong>3 在main目录下 执行以下命令，创建本地方法头文件,生成的文件在main下的jni目录中</strong><br><code>wenyao:main xiongxiong$ javah -d jni -classpath ./Java  ndk.runtest.ndk_test2.HelloWorldJNI</code></p>
-<p>内容如下：</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">/* DO NOT EDIT THIS FILE - it is machine generated */</span><br><span class="line">#include &lt;jni.h&gt;</span><br><span class="line">/* Header for class ndk_runtest_ndk_test2_HelloWorldJNI */</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#ifndef _Included_ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line">#define _Included_ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">extern &quot;C&quot; &#123;</span><br><span class="line">#endif</span><br><span class="line">/*</span><br><span class="line"> * Class:     ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line"> * Method:    getString</span><br><span class="line"> * Signature: ()Ljava/lang/String;</span><br><span class="line"> */</span><br><span class="line">JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_getString</span><br><span class="line">  (JNIEnv *, jobject);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * Class:     ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line"> * Method:    setString</span><br><span class="line"> * Signature: (Ljava/lang/String;)Ljava/lang/String;</span><br><span class="line"> */</span><br><span class="line">JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_setString</span><br><span class="line">  (JNIEnv *, jobject, jstring);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">&#125;</span><br><span class="line">#endif</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure></div>
-
-<p><strong>4 创建cpp文件，在jni目录引入 刚才的头文件，实现具体方法</strong></p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">//</span><br><span class="line">// Created by wenyao on 2020/2/8.</span><br><span class="line">//</span><br><span class="line"></span><br><span class="line"># include &lt;jni.h&gt;</span><br><span class="line"># include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;cstring&gt;</span><br><span class="line"># include &quot;ndk_runtest_ndk_test2_HelloWorldJNI.h&quot;</span><br><span class="line"></span><br><span class="line"># ifdef _cplusplus</span><br><span class="line">extern &quot;C&quot;</span><br><span class="line">&#123;</span><br><span class="line"># endif</span><br><span class="line"></span><br><span class="line">    JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_getString(JNIEnv *env, jobject obj)&#123;</span><br><span class="line">        return env -&gt; NewStringUTF(&quot;Get Hello world JNI!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_setString(JNIEnv *env, jobject obj, jstring str)&#123;</span><br><span class="line">        char* jnistr = (char *) env-&gt;GetStringUTFChars(str, NULL);</span><br><span class="line">        strcat(jnistr,&quot;: I am JNI&quot;);</span><br><span class="line">        return env -&gt; NewStringUTF(jnistr);</span><br><span class="line">    &#125;</span><br><span class="line"># ifdef _cplusplus</span><br><span class="line">&#125;</span><br><span class="line"># endif</span><br></pre></td></tr></table></figure></div>
-
-<p><strong>5 在main目录运行：ndk-build生成so文件</strong></p>
-<p><strong>6 编译项目并运行</strong><br><img src="https://i.loli.net/2020/02/08/YrXdmaED3Ltj4J7.png" alt="A14DF098-B6E7-42D3-996B-5B3435223618.png"></p>
-
+<p>对应事件响应</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">package ndk.runtest.helloapp;</span><br><span class="line"></span><br><span class="line">import android.support.v7.app.AppCompatActivity;</span><br><span class="line">import android.os.Bundle;</span><br><span class="line">import android.view.View;</span><br><span class="line">import android.widget.Button;</span><br><span class="line">import android.widget.TextView;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class MainActivity extends AppCompatActivity &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.button);</span><br><span class="line">//        TextView text1=(TextView)findViewById(R.id.fist);</span><br><span class="line">//        text1.setText(&quot;admin&quot;);</span><br><span class="line">        Button button1 = (Button) findViewById(R.id.btnOK);</span><br><span class="line">        button1.setText(&quot;值改变了&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void clickButton(View view)&#123;</span><br><span class="line"></span><br><span class="line">        TextView v =(TextView)findViewById(R.id.btnOK);</span><br><span class="line">        v.setText(&quot;文本值发生了变化&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
       
     </div>
     
@@ -123,7 +112,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/5/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/7/">Next &raquo;</a>
   </nav>
 
 
@@ -158,7 +147,7 @@
   <div class="widget-box">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
     </div>
   </div>
 
@@ -168,6 +157,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/05/06/mssql-获取网站绝对路径的一个小技巧/">mssql 获取网站绝对路径的一个小技巧</a>
+          </li>
         
           <li>
             <a href="/2020/03/15/CVE-2020-1938复现和调试/">CVE-2020-1938复现和调试</a>
@@ -183,10 +176,6 @@
         
           <li>
             <a href="/2020/02/11/Activity及Intent/">Activity及Intent</a>
-          </li>
-        
-          <li>
-            <a href="/2020/02/11/Android布局及控件/">Android布局及控件</a>
           </li>
         
       </ul>

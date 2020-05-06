@@ -63,21 +63,21 @@
       <div id="middlecontent" title class="global-width sidebar-right">
         <section id="main">
   
-    <article id="post-hadoop-伪分布式" class="article global-container article-type-post" itemscope itemprop="blogPost">
+    <article id="post-NDK-Build-方式实现JIN" class="article global-container article-type-post" itemscope itemprop="blogPost">
   
     <header class="article-header">
       
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2020/01/29/hadoop-伪分布式/">hadoop 伪分布式</a>
+      <a class="article-title" href="/2020/02/08/NDK-Build-方式实现JIN/">NDK-Build 方式实现JIN</a>
     </h1>
   
 
     </header>
   
   <div class="article-meta">
-    <a href="/2020/01/29/hadoop-伪分布式/" class="article-date">
-  <time datetime="2020-01-29T14:59:06.000Z" itemprop="datePublished">2020-01-29</time>
+    <a href="/2020/02/08/NDK-Build-方式实现JIN/" class="article-date">
+  <time datetime="2020-02-08T11:55:59.000Z" itemprop="datePublished">2020-02-08</time>
 </a>
     
     
@@ -88,66 +88,27 @@
     
     <div class="article-content article-content-cloud" itemprop="articleBody">
       
-        <h4 id="hadoop-伪分布式"><a href="#hadoop-伪分布式" class="headerlink" title="hadoop 伪分布式"></a>hadoop 伪分布式</h4><p>整体的思路是在HDFS文件系统通过YARN资源调度，MapReduce（分布式）计算</p>
-<h5 id="配置HDFS并运行MapReduce"><a href="#配置HDFS并运行MapReduce" class="headerlink" title="配置HDFS并运行MapReduce"></a>配置HDFS并运行MapReduce</h5><p>1 配置hadoop的hadoop-env.sh</p>
-<p><code>export JAVA_HOME=/opt/java/jdk1.8.0_231</code></p>
-<p>2 /etc/hadoop/core-site.xml</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!--修改文件系统 --&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;fs.defaultFS&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;hdfs://localhost:9000&lt;/value&gt;</span><br><span class="line">&lt;/property&gt;</span><br><span class="line">&lt;!--配置hadoop运行时产生文件的存储目录 --&gt;</span><br><span class="line">  &lt;property&gt;</span><br><span class="line">        &lt;name&gt;hadoop.tmp.dir&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;/opt/hadoop/hadoop-2.7.7/data/tmp&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure></div>
+        <p>cmake方式创建也比较稳妥，但是想学学传统NDK-Build方式，谷歌比较推荐cmake编译的方式，cmake方式较为简洁。<br><strong>1 修改app目录下的build.gradle文件</strong><br>关键配置，选择构建项目的编译方式</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">    externalNativeBuild &#123;</span><br><span class="line">//        cmake &#123;</span><br><span class="line">//            path &quot;CMakeLists.txt&quot;</span><br><span class="line">//        &#125;</span><br><span class="line">        ndkBuild &#123;</span><br><span class="line">            path &apos;src/main/jni/Android.mk&apos;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>etc/hadoop/hdfs-site.xml</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!--指定HDFS副本的数量 --&gt;</span><br><span class="line">&lt;configuration&gt;</span><br><span class="line">    &lt;property&gt;</span><br><span class="line">        &lt;name&gt;dfs.replication&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;1&lt;/value&gt;</span><br><span class="line">    &lt;/property&gt;</span><br><span class="line">&lt;/configuration&gt;</span><br></pre></td></tr></table></figure></div>
+<p>配置文件：Android.mk</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># 当前模块路径，即Android.mk所在的文件目录</span><br><span class="line">LOCAL_PATH       :=  $(call my-dir)</span><br><span class="line"></span><br><span class="line"># 开始清除LOCAL_XXX变量</span><br><span class="line">include              $(CLEAR_VARS)</span><br><span class="line"></span><br><span class="line"># 动态库模块名称，Java代码中中加载动态库中使用System.loadLibrary(&quot;helloworld_jni&quot;);</span><br><span class="line">LOCAL_MODULE     :=  helloworld_jni</span><br><span class="line"></span><br><span class="line"># 编译的C/C++源文件，可多个，以空格隔开</span><br><span class="line">LOCAL_SRC_FILES  :=  helloworld.cpp</span><br><span class="line"></span><br><span class="line"># 开始动态编译生成动态库</span><br><span class="line">include $(BUILD_SHARED_LIBRARY)</span><br></pre></td></tr></table></figure></div>
 
-<p>2 启动集群</p>
-<p>格式化namenode（第一次启动时格式化，以后不要经常格式化）</p>
-<p>原因：每次格式化的时候会产生新的集群id，导致Namenode和DataNode的集群id不一致。集群找不到以往数据。所以，格式Namenode时，一定要删除data数据(/data/tmp/dfs/data)和log日志，然后再格式化NameNode</p>
-<p><code>bin/hdfs namenode -format</code></p>
-<p>启动NameNode</p>
-<p><code>sbin/hadoop-daemon.sh start namenode</code></p>
-<p>启动DataNode</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">sbin/hadoop-daemon.sh start datanode</span><br></pre></td></tr></table></figure></div>
+<p>Application.mk</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line"># 需要编译的ABI</span><br><span class="line">APP_ABI :=armeabi-v7a x86 x86_64</span><br></pre></td></tr></table></figure></div>
 
-<p>Jps</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/opt/hadoop/hadoop-2.7.7# jps</span><br><span class="line">3459 DataNode</span><br><span class="line">3556 Jps</span><br><span class="line">3367 NameNode</span><br></pre></td></tr></table></figure></div>
+<p><strong>2 在src/main下创建HelloWorldJNI.class<br>在MainActivity会调用这个class</strong></p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">package ndk.runtest.ndk_test2;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class HelloWorldJNI &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    // 加载Native动态库（so库），动态库的名称后面在mk文件中会使用到</span><br><span class="line">    static &#123;</span><br><span class="line">        System.loadLibrary(&quot;helloworld_jni&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    // 定义Native方法</span><br><span class="line">    public native String getString();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public native String setString(String text);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div>
 
-<p>9000为RPC端口</p>
-<p>50070为http端口</p>
-<p><img src="https://i.loli.net/2020/01/29/7fs4vb6QDPTmltG.png" alt="image.png"></p>
-<p>关闭服务：</p>
-<p>sbin/hadoop-daemon.sh stop datanode</p>
-<p>sbin/hadoop-daemon.sh stop namenode</p>
-<h5 id="配置YARN集群并运行MapReduce"><a href="#配置YARN集群并运行MapReduce" class="headerlink" title="配置YARN集群并运行MapReduce"></a>配置YARN集群并运行MapReduce</h5><p>1 配置yam-env.sh</p>
-<p>配置JAVA_HMOE</p>
-<p><code>export JAVA_HOME=/opt/java/jdk1.8.0_231</code></p>
-<p>2 配置yarn-site.xml</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!-- Reduce 获取数据方式--&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">        &lt;name&gt;yarn.nodemanager.aux-services&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;mapreduce_shuffle&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br><span class="line"> &lt;!-- 指定YARN的ResourceManager的地址--&gt;</span><br><span class="line"> &lt;property&gt;</span><br><span class="line">        &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;ubuntu&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure></div>
+<p><strong>3 在main目录下 执行以下命令，创建本地方法头文件,生成的文件在main下的jni目录中</strong><br><code>wenyao:main xiongxiong$ javah -d jni -classpath ./Java  ndk.runtest.ndk_test2.HelloWorldJNI</code></p>
+<p>内容如下：</p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">/* DO NOT EDIT THIS FILE - it is machine generated */</span><br><span class="line">#include &lt;jni.h&gt;</span><br><span class="line">/* Header for class ndk_runtest_ndk_test2_HelloWorldJNI */</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#ifndef _Included_ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line">#define _Included_ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">extern &quot;C&quot; &#123;</span><br><span class="line">#endif</span><br><span class="line">/*</span><br><span class="line"> * Class:     ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line"> * Method:    getString</span><br><span class="line"> * Signature: ()Ljava/lang/String;</span><br><span class="line"> */</span><br><span class="line">JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_getString</span><br><span class="line">  (JNIEnv *, jobject);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * Class:     ndk_runtest_ndk_test2_HelloWorldJNI</span><br><span class="line"> * Method:    setString</span><br><span class="line"> * Signature: (Ljava/lang/String;)Ljava/lang/String;</span><br><span class="line"> */</span><br><span class="line">JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_setString</span><br><span class="line">  (JNIEnv *, jobject, jstring);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">&#125;</span><br><span class="line">#endif</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure></div>
 
-<p>3 配置mapred-env.sh</p>
-<p>配置JAVA_HMOE</p>
-<p><code>export JAVA_HOME=/opt/java/jdk1.8.0_231</code></p>
-<p>4配置mapred-site.xml</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">cp mapred-site.xml.template mapred-site.xml</span><br></pre></td></tr></table></figure></div>
+<p><strong>4 创建cpp文件，在jni目录引入 刚才的头文件，实现具体方法</strong></p>
+<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">//</span><br><span class="line">// Created by wenyao on 2020/2/8.</span><br><span class="line">//</span><br><span class="line"></span><br><span class="line"># include &lt;jni.h&gt;</span><br><span class="line"># include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;cstring&gt;</span><br><span class="line"># include &quot;ndk_runtest_ndk_test2_HelloWorldJNI.h&quot;</span><br><span class="line"></span><br><span class="line"># ifdef _cplusplus</span><br><span class="line">extern &quot;C&quot;</span><br><span class="line">&#123;</span><br><span class="line"># endif</span><br><span class="line"></span><br><span class="line">    JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_getString(JNIEnv *env, jobject obj)&#123;</span><br><span class="line">        return env -&gt; NewStringUTF(&quot;Get Hello world JNI!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    JNIEXPORT jstring JNICALL Java_ndk_runtest_ndk_1test2_HelloWorldJNI_setString(JNIEnv *env, jobject obj, jstring str)&#123;</span><br><span class="line">        char* jnistr = (char *) env-&gt;GetStringUTFChars(str, NULL);</span><br><span class="line">        strcat(jnistr,&quot;: I am JNI&quot;);</span><br><span class="line">        return env -&gt; NewStringUTF(jnistr);</span><br><span class="line">    &#125;</span><br><span class="line"># ifdef _cplusplus</span><br><span class="line">&#125;</span><br><span class="line"># endif</span><br></pre></td></tr></table></figure></div>
 
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">&lt;!--指定MR运行在YARN上 --&gt;</span><br><span class="line">&lt;property&gt;</span><br><span class="line">        &lt;name&gt;mapreduce.framework.name&lt;/name&gt;</span><br><span class="line">        &lt;value&gt;yarn&lt;/value&gt;</span><br><span class="line"> &lt;/property&gt;</span><br></pre></td></tr></table></figure></div>
-
-<p>5启动集群</p>
-<p>  启动前必须保证namenode和datanode已经启动</p>
-<p> 启动resourcemanager</p>
-<p>yarn-daemon.sh start resourcemanager</p>
-<p>yarn-daemon.sh stop resourcemanager</p>
-<p>yarn-daemon.sh start nodemanager</p>
-<p>yarn-daemon.sh stop nodemanager</p>
-<p>8088 resourcemanager端口</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">问题排查vim /etc/hosts      localhost对应ip不为127</span><br><span class="line"></span><br><span class="line">service network-manager restart</span><br><span class="line"></span><br><span class="line">netstat -tpnl | grep java</span><br></pre></td></tr></table></figure></div>
-
-<p><img src="https://i.loli.net/2020/01/29/png4Zr8JwOWlFGU.png" alt="image.png"></p>
-<p>上传文件到服务器：</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">hadoop fs -put wcinput /</span><br></pre></td></tr></table></figure></div>
-
-<p>执行计算命令(在文件系统会多处两个文件夹)<br>hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-2.7.7.jar wordcount /wcinput /wcoutput</p>
-<p><img src="https://i.loli.net/2020/01/29/ZLGnfxsMbuAWS8Q.png" alt="image.png"></p>
-<p>统计</p>
-<div class="highlight-box"autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" contenteditable="true"data-rel="PLAIN"><figure class="iseeu highlight /plain"><table><tr><td class="code"><pre><span class="line">root@ubuntu:/opt/hadoop/hadoop-2.7.7# hadoop fs -cat /wcoutput/*</span><br><span class="line">hadoop	1</span><br><span class="line">hdaoop	1</span><br><span class="line">mapreduce	1</span><br><span class="line">test	2</span><br><span class="line">yarn	1</span><br></pre></td></tr></table></figure></div>
-
+<p><strong>5 在main目录运行：ndk-build生成so文件</strong></p>
+<p><strong>6 编译项目并运行</strong><br><img src="https://i.loli.net/2020/02/08/YrXdmaED3Ltj4J7.png" alt="A14DF098-B6E7-42D3-996B-5B3435223618.png"></p>
 
       
     </div>
@@ -162,7 +123,7 @@
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/17/">17</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/6/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><a class="page-number" href="/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" href="/page/8/">Next &raquo;</a>
   </nav>
 
 
@@ -197,7 +158,7 @@
   <div class="widget-box">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/03/">March 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/02/">February 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/">January 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/">December 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/10/">October 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li></ul>
     </div>
   </div>
 
@@ -207,6 +168,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/05/06/mssql-获取网站绝对路径的一个小技巧/">mssql 获取网站绝对路径的一个小技巧</a>
+          </li>
         
           <li>
             <a href="/2020/03/15/CVE-2020-1938复现和调试/">CVE-2020-1938复现和调试</a>
@@ -222,10 +187,6 @@
         
           <li>
             <a href="/2020/02/11/Activity及Intent/">Activity及Intent</a>
-          </li>
-        
-          <li>
-            <a href="/2020/02/11/Android布局及控件/">Android布局及控件</a>
           </li>
         
       </ul>

